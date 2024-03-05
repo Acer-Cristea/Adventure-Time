@@ -6,35 +6,41 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this)
 
         // define custom properties
-        this.WALK_VELOCITY = 75
+        this.WALK_VELOCITY = 175
         this.JUMP_VELOCITY = -350
+        this.DRAG = 350
 
         this.body.setSize(this.width/2, this.height/2, false)
         this.body.setOffset(this.width/10, this.height/2)
         this.body.setCollideWorldBounds(true)
+
+        
+        this.body.setDragX(this.DRAG)
         
         // initialize state machine
         scene.mcFSM = new StateMachine('idle', {
             idle: new IdleState(),
             walk: new WalkState(),
-            jump: new JumpState(),
-            attack: new AttackState()
+            //jump: new JumpState(),
+            //attack: new AttackState()
         }, [scene, this])
     }
 }
 
 // mc-specific state classes
 class IdleState extends State {
-    enter(scene, mc) {
+
+    //enter(scene, mc) {
         //console.log('IdleState: enter')
         
-        mc.body.setAcceleration(0)    // allow drag to engage
-    }
+        //mc.body.setAcceleration(0)    // allow drag to engage
+    //}
 
     execute(scene, mc) {
         const { KEYS } = scene
 
         if(mc.body.velocity.x == 0) {
+            //console.log("velocity0")
             mc.anims.play('mc-idle')
         }
 
@@ -72,14 +78,12 @@ class WalkState extends State {
 
         // handle left/right movement
         if(KEYS.LEFT.isDown) {
-            //mc.setFlip(true)
-            //mc.body.setOffset(mc.width/2, mc.height/2)
-            mc.body.setAccelerationX(-mc.ACCELERATION)
+            //console.log("testing left")
+            mc.body.setVelocityX(-mc.WALK_VELOCITY)
         }
         if(KEYS.RIGHT.isDown) {
-            //mc.resetFlip()
-            //mc.body.setOffset(mc.width/10, mc.height/2)
-            mc.body.setAccelerationX(mc.ACCELERATION)
+            //console.log("testing right")
+            mc.body.setVelocityX(mc.WALK_VELOCITY)
         }
     }
 }
