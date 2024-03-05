@@ -13,11 +13,11 @@ class Play extends Phaser.Scene {
         // grab keyboard binding from Keys scene
         this.KEYS = this.scene.get('sceneKeys').KEYS
 
-        // create tilemap
         const map = this.add.tilemap('Map')
 
         const tileset = map.addTilesetImage("Base", "tilesetImage")
         const layer = map.createLayer("Collision", tileset, 0,0)
+        this.add.image(0,0,"TP").setOrigin(0)        // create tilemap
 
     }
 

@@ -7,6 +7,11 @@ class Load extends Phaser.Scene {
 
     preload() {
 
+        this.load.path = "./assets/"
+
+        this.load.image("TP", "Top_Border.png")
+
+
         this.load.path = './assets/tilemaps/'
 
         this.load.image("tilesetImage", "tileset.png")
