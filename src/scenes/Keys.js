@@ -11,7 +11,7 @@ class Keys extends Phaser.Scene {
     create() {
         const { KeyCodes } = Phaser.Input.Keyboard
         this.KEYS = this.input.keyboard.addKeys({
-            JUMP:   KeyCodes.F,
+            JUMP:   KeyCodes.UP,
             ATTACK: KeyCodes.D,
             LEFT:   KeyCodes.LEFT,
             RIGHT:  KeyCodes.RIGHT,
