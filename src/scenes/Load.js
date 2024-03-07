@@ -14,7 +14,10 @@ class Load extends Phaser.Scene {
             frameHeight: 116
         })
 
-        this.load.image("enemy", "enemy.png")
+        this.load.spritesheet("bee", "bee_moves.png", {
+            frameWidth: 290,
+            frameHeight: 245
+        })
 
         this.load.path = './assets/tilemaps/'
 
@@ -47,10 +50,24 @@ class Load extends Phaser.Scene {
 
         this.anims.create({
             key: "mc-jump",
-            frameRate: 8,
+            frameRate: 4,
             repeat: 0,
             frames: this.anims.generateFrameNumbers("mc-sheet", {frames: [0, 1]})
         })
+
+        this.anims.create({
+            key: "mc-attack",
+            frameRate: 4,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers("mc-sheet", {frames: [5, 6, 7]})
+        })
+
+        this.anims.create({
+            key: "bee-walk",
+            frameRate: 4,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers("bee", {frames: [0, 1]})
+        })    
 
         this.scene.start('sceneKeys')
     }

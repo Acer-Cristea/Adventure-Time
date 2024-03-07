@@ -31,9 +31,10 @@ class Play extends Phaser.Scene {
 
         const beeSpawn = this.map.findObject("bee_spawn", (obj) => obj.name === "beeSpawn")
 
-        this.bee = this.physics.add.sprite(beeSpawn.x,beeSpawn.y , "enemy")
+        this.bee = this.physics.add.sprite(beeSpawn.x,beeSpawn.y , "bee", 0)
+        this.bee.setSize(200,200)
+        //this.bee.anims.play("bee-walk")
 
-        
         // colliders
         this.physics.add.collider(this.mc, this.colLayer)
 
@@ -56,7 +57,8 @@ class Play extends Phaser.Scene {
         this.scoreText = this.add.text(650, 25, 'Score: 0', { fontSize: '50px', fill: '#ffffff' })
         this.scoreText.setScrollFactor(0)
 
-
+        //add in lives, swing animation, create a hitbox on swing
+        //
 
     }
 
@@ -67,11 +69,22 @@ class Play extends Phaser.Scene {
 
         //console.log("distance: ", distance)
         if (distance <= distanceThreshold){
-            if (this.mc.x <= this.bee.x) {
-                this.bee.setVelocityX(-50)
-            }
-            else if (this.mc.x > this.bee.x) {
-                this.bee.setVelocityX(50)
+
+
+            if (!this.bee.anims.isPlaying) {
+                // Start playing the bee animation
+                this.bee.anims.play("bee-walk")
+
+                if (this.mc.x <= this.bee.x) {
+                    this.bee.resetFlip()
+                    this.bee.setVelocityX(-50)
+                }
+                else if (this.mc.x > this.bee.x) {
+
+                    //this.bee.anims.play("bee-walk")
+                    this.bee.setFlip(true)
+                    this.bee.setVelocityX(50)
+                }
             }
         }
         // get local KEYS reference

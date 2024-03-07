@@ -6,13 +6,16 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this)
 
         // define custom properties
-        this.WALK_VELOCITY = 175
+        this.WALK_VELOCITY = 400
         this.JUMP_VELOCITY = -450
         //maybe you get a boost in the x direction too?
         //add acceleration for jumping maybe
         this.DRAG = 350
-
-        this.body.setSize(this.width, this.height, false)
+        //console.log("this.width", this.width)
+        //console.log("this.height", this.height)
+        //adjust the body size so if fits the character, have to adjust the spritesheet, needs to be perfect
+        this.body.setSize(65, this.height, true)
+        //this.body.setOffset(60,0)
         this.body.setCollideWorldBounds(true)
         
         this.body.setDragX(this.DRAG)
@@ -22,7 +25,7 @@ class MC extends Phaser.Physics.Arcade.Sprite {
             idle: new IdleState(),
             walk: new WalkState(),
             jump: new JumpState(),
-            //attack: new AttackState()
+            attack: new AttackState()
         }, [scene, this])
     }
 }
@@ -31,11 +34,23 @@ class MC extends Phaser.Physics.Arcade.Sprite {
 class IdleState extends State {
 
     enter(scene, mc) {
+
+        if (mc.flipX){
+            mc.body.setSize(65, mc.height, true)
+            mc.body.setOffset(15,0)         
+        }
+        if (!mc.flipX){
+            mc.body.setSize(65, mc.height, true)
+            mc.body.setOffset(40,0)         
+        }      
+
         //console.log('IdleState: enter')
     }
 
 
     execute(scene, mc) {
+
+
         const { KEYS } = scene
         const grounded = mc.body.touching.down || mc.body.blocked.down
 
@@ -46,6 +61,11 @@ class IdleState extends State {
         // jump
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP) && grounded) {
             this.stateMachine.transition('jump')
+        }
+
+        // attack
+        if(Phaser.Input.Keyboard.JustDown(KEYS.ATTACK) && grounded) {
+            this.stateMachine.transition('attack')
         }
 
         // left/right to move
@@ -72,19 +92,30 @@ class WalkState extends State {
             this.stateMachine.transition('jump')
         }
 
+        // jump
+        if(Phaser.Input.Keyboard.JustDown(KEYS.ATTACK) && grounded) {
+            this.stateMachine.transition('attack')
+        }
+
         // back to idle
         if( !( KEYS.LEFT.isDown || KEYS.RIGHT.isDown ) ) {
             this.stateMachine.transition('idle')
         }
 
+        
+
         // handle left/right movement
         if(KEYS.LEFT.isDown) {
             //console.log("testing left")
             mc.setFlip(true)
+            mc.body.setSize(40, mc.height, false)
+            mc.body.setOffset(15,0)
             mc.body.setVelocityX(-mc.WALK_VELOCITY)
         }
         if(KEYS.RIGHT.isDown) {
             mc.resetFlip()
+            mc.body.setSize(40, mc.height, false)
+            mc.body.setOffset(60,0)
             //console.log("testing right")
             mc.body.setVelocityX(mc.WALK_VELOCITY)
         }
@@ -135,8 +166,38 @@ class JumpState extends State {
     }
 }
 
-// class AttackState extends State {
-//     enter(scene, mc) {
+class AttackState extends State {
+    enter(scene, mc) {
+        console.log("In AttackState")
+        mc.anims.play('mc-attack')
+        mc.body.setVelocityY(mc.JUMP_VELOCITY)
+        mc.body.setVelocityX(100)
+
+
         
-//     }
-// }
+    }
+
+    execute(scene, mc) {
+        const { KEYS } = scene
+
+        let grounded = mc.body.touching.down || mc.body.blocked.down
+        // end jump
+        if(grounded) {
+            this.stateMachine.transition('idle')
+        }
+
+        // handle movement
+        if(KEYS.LEFT.isDown) {
+            mc.setFlip(true)
+            mc.body.setVelocityX(-mc.WALK_VELOCITY)  // slower speed in air, maybe don't we'll see
+        }
+
+        if(KEYS.RIGHT.isDown) {
+            mc.resetFlip()
+            mc.body.setVelocityX(mc.WALK_VELOCITY)
+        }
+    }
+
+
+
+}
