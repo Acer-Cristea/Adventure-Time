@@ -14,8 +14,6 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         //console.log("this.width", this.width)
         //console.log("this.height", this.height)
         //adjust the body size so if fits the character, have to adjust the spritesheet, needs to be perfect
-        this.body.setSize(65, this.height, true)
-        //this.body.setOffset(60,0)
         this.body.setCollideWorldBounds(true)
         
         this.body.setDragX(this.DRAG)
@@ -36,12 +34,12 @@ class IdleState extends State {
     enter(scene, mc) {
 
         if (mc.flipX){
-            mc.body.setSize(65, mc.height, true)
+            mc.body.setSize(45, mc.height, true)
             mc.body.setOffset(15,0)         
         }
         if (!mc.flipX){
-            mc.body.setSize(65, mc.height, true)
-            mc.body.setOffset(40,0)         
+            mc.body.setSize(45, mc.height, true)
+            mc.body.setOffset(20,0)         
         }      
 
         //console.log('IdleState: enter')
@@ -52,10 +50,11 @@ class IdleState extends State {
 
 
         const { KEYS } = scene
-        const grounded = mc.body.touching.down || mc.body.blocked.down
+        const grounded = mc.body.velocity.y == 0
 
-        if(mc.body.velocity.x == 0) {
-            mc.anims.play('mc-idle')
+        
+        if(mc.body.velocity.x == 0 && !mc.anims.isPlaying) {
+            mc.anims.play('mc-idle');
         }
 
         // jump
@@ -80,25 +79,29 @@ class WalkState extends State {
     enter(scene, mc) {
         //console.log('WalkState: enter')
         mc.anims.play('mc-walk')
+        
     }
 
     execute(scene, mc) {
         const { KEYS } = scene
-        const grounded = mc.body.touching.down || mc.body.blocked.down
+        const grounded = mc.body.velocity.y == 0
 
+        
 
         // jump
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP) && grounded) {
+            mc.anims.stop("mc-walk")
             this.stateMachine.transition('jump')
         }
 
-        // jump
+        // attack
         if(Phaser.Input.Keyboard.JustDown(KEYS.ATTACK) && grounded) {
             this.stateMachine.transition('attack')
         }
 
         // back to idle
-        if( !( KEYS.LEFT.isDown || KEYS.RIGHT.isDown ) ) {
+        if( (!( KEYS.LEFT.isDown || KEYS.RIGHT.isDown ) && mc.body.velocity.x == 0) ) {
+            mc.anims.stop("mc-walk")
             this.stateMachine.transition('idle')
         }
 
@@ -126,6 +129,8 @@ class JumpState extends State {
     enter(scene, mc) {
         mc.anims.play('mc-jump')
         mc.body.setVelocityY(mc.JUMP_VELOCITY)
+        mc.body.setSize(mc.width-30, mc.height/2+40, false)
+        mc.body.setOffset(15,10)
 
         // play sfx
         const sound1 = scene.sound.add('jump-sfx1', { volume: 0.05 });
@@ -147,40 +152,47 @@ class JumpState extends State {
     execute(scene, mc) {
         const { KEYS } = scene
 
-        let grounded = mc.body.touching.down || mc.body.blocked.down
+        //let grounded = mc.body.touching.down || mc.body.blocked.down
+        let grounded = mc.body.velocity.y == 0
         // end jump
-        if(grounded) {
-            this.stateMachine.transition('idle')
-        }
+
 
         // handle movement
         if(KEYS.LEFT.isDown) {
+            mc.body.setSize(mc.width-30, mc.height/2+40, false)
+            mc.body.setOffset(15,10)
             mc.setFlip(true)
             mc.body.setVelocityX(-mc.WALK_VELOCITY)  // slower speed in air, maybe don't we'll see
         }
 
-        if(KEYS.RIGHT.isDown) {
+        else if(KEYS.RIGHT.isDown) {
+            mc.body.setSize(mc.width-30, mc.height/2+40, false)
+            mc.body.setOffset(15,10)
             mc.resetFlip()
             mc.body.setVelocityX(mc.WALK_VELOCITY)
+        }
+
+        if(grounded) {
+            this.stateMachine.transition('idle')
         }
     }
 }
 
 class AttackState extends State {
     enter(scene, mc) {
-        console.log("In AttackState")
+        //console.log("In AttackState")
         mc.anims.play('mc-attack')
         mc.body.setVelocityY(mc.JUMP_VELOCITY)
         mc.body.setVelocityX(100)
-
-
-        
+        mc.body.setSize(20, 116, false)
+        mc.body.setOffset(90,10)
+         
     }
 
     execute(scene, mc) {
         const { KEYS } = scene
 
-        let grounded = mc.body.touching.down || mc.body.blocked.down
+        let grounded = mc.body.velocity.y == 0
         // end jump
         if(grounded) {
             this.stateMachine.transition('idle')
@@ -188,11 +200,15 @@ class AttackState extends State {
 
         // handle movement
         if(KEYS.LEFT.isDown) {
+            mc.body.setSize(20, 116, false)
+            mc.body.setOffset(0,10)
             mc.setFlip(true)
             mc.body.setVelocityX(-mc.WALK_VELOCITY)  // slower speed in air, maybe don't we'll see
         }
 
         if(KEYS.RIGHT.isDown) {
+            mc.body.setSize(20, 116, false)
+            mc.body.setOffset(90,10)
             mc.resetFlip()
             mc.body.setVelocityX(mc.WALK_VELOCITY)
         }

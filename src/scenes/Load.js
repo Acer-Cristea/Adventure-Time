@@ -14,6 +14,11 @@ class Load extends Phaser.Scene {
             frameHeight: 116
         })
 
+        this.load.spritesheet('mc-dance-sheet', 'mc-dance-sheet.png', {
+            frameWidth: 80,
+            frameHeight: 116
+        })
+
         this.load.spritesheet("bee", "bee_moves.png", {
             frameWidth: 290,
             frameHeight: 245
@@ -36,9 +41,9 @@ class Load extends Phaser.Scene {
 
         this.anims.create({
             key: 'mc-idle',
-            frameRate: 8,
-            repeat: 0,
-            frames: this.anims.generateFrameNumbers('mc-sheet', { frames: [ 2 ]} )
+            frameRate: 6,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('mc-dance-sheet', { frames: [ 0, 1, 2 ]} )
         })
 
         this.anims.create({
@@ -50,7 +55,7 @@ class Load extends Phaser.Scene {
 
         this.anims.create({
             key: "mc-jump",
-            frameRate: 4,
+            frameRate: 3,
             repeat: 0,
             frames: this.anims.generateFrameNumbers("mc-sheet", {frames: [0, 1]})
         })

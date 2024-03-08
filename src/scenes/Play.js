@@ -26,6 +26,12 @@ class Play extends Phaser.Scene {
         // create mc
         this.mc = new MC(this, mcSpawn.x, mcSpawn.y, "mc-sheet", 0)
         this.mc.anims.play("mc-idle")
+        
+        this.attackHitbox = this.physics.add.sprite(this.mc.x, this.mc.y, null)
+        this.attackHitbox.setSize(10,10)
+        this.attackHitbox.body.setAllowGravity(false)
+        this.attackHitbox.setVisible(false)
+
 
         //create bee
 
@@ -40,6 +46,10 @@ class Play extends Phaser.Scene {
 
         this.physics.add.collider(this.bee, this.colLayer)
 
+        this.physics.add.collider(this.attackHitbox, this.colLayer)
+
+
+        //this.physics.add.overlap(this.mc, this.bee, this.attackBee, null, this)
 
         this.uiCamera = this.cameras.add(0, 0, 1600, 100)
         this.uiCamera.setScroll(0, 0) // Position the UI camera at the top-left corner of the game window
@@ -64,6 +74,8 @@ class Play extends Phaser.Scene {
 
     update() {
 
+
+
         const distanceThreshold = 400
         const distance = Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bee.x, this.bee.y)
 
@@ -87,6 +99,7 @@ class Play extends Phaser.Scene {
                 }
             }
         }
+        this.attackHitbox.setPosition(this.mc.x, this.mc.y)
         // get local KEYS reference
         const { KEYS } = this
 
