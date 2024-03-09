@@ -17,6 +17,12 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         this.body.setCollideWorldBounds(true)
         
         this.body.setDragX(this.DRAG)
+
+        // Create the attack hitbox sprite
+        this.attackHitbox = scene.physics.add.sprite(10, 10, null)
+        this.attackHitbox.setSize(10, 10);
+        this.attackHitbox.body.setAllowGravity(false)
+        this.attackHitbox.setVisible(false)
         
         // initialize state machine
         scene.mcFSM = new StateMachine('idle', {
@@ -33,6 +39,9 @@ class IdleState extends State {
 
     enter(scene, mc) {
 
+        mc.attackHitbox.setPosition(10, 10)
+
+
         if (mc.flipX){
             mc.body.setSize(45, mc.height, true)
             mc.body.setOffset(15,0)         
@@ -47,6 +56,8 @@ class IdleState extends State {
 
 
     execute(scene, mc) {
+
+
 
 
         const { KEYS } = scene
@@ -78,11 +89,16 @@ class IdleState extends State {
 class WalkState extends State {
     enter(scene, mc) {
         //console.log('WalkState: enter')
+        mc.attackHitbox.setPosition(10, 10)
+
         mc.anims.play('mc-walk')
+
         
     }
 
     execute(scene, mc) {
+
+
         const { KEYS } = scene
         const grounded = mc.body.velocity.y == 0
 
@@ -129,8 +145,8 @@ class JumpState extends State {
     enter(scene, mc) {
         mc.anims.play('mc-jump')
         mc.body.setVelocityY(mc.JUMP_VELOCITY)
-        mc.body.setSize(mc.width-30, mc.height/2+40, false)
-        mc.body.setOffset(15,10)
+        mc.body.setSize(mc.width-60, mc.height/2+40, false)
+        mc.body.setOffset(30,10)
 
         // play sfx
         const sound1 = scene.sound.add('jump-sfx1', { volume: 0.05 });
@@ -152,6 +168,7 @@ class JumpState extends State {
     execute(scene, mc) {
         const { KEYS } = scene
 
+
         //let grounded = mc.body.touching.down || mc.body.blocked.down
         let grounded = mc.body.velocity.y == 0
         // end jump
@@ -159,15 +176,15 @@ class JumpState extends State {
 
         // handle movement
         if(KEYS.LEFT.isDown) {
-            mc.body.setSize(mc.width-30, mc.height/2+40, false)
-            mc.body.setOffset(15,10)
+            mc.body.setSize(mc.width-60, mc.height/2+40, false)
+            mc.body.setOffset(30,10)
             mc.setFlip(true)
             mc.body.setVelocityX(-mc.WALK_VELOCITY)  // slower speed in air, maybe don't we'll see
         }
 
         else if(KEYS.RIGHT.isDown) {
-            mc.body.setSize(mc.width-30, mc.height/2+40, false)
-            mc.body.setOffset(15,10)
+            mc.body.setSize(mc.width-60, mc.height/2+40, false)
+            mc.body.setOffset(30,10)
             mc.resetFlip()
             mc.body.setVelocityX(mc.WALK_VELOCITY)
         }
@@ -180,17 +197,32 @@ class JumpState extends State {
 
 class AttackState extends State {
     enter(scene, mc) {
+        //fix flipping issue
         //console.log("In AttackState")
         mc.anims.play('mc-attack')
         mc.body.setVelocityY(mc.JUMP_VELOCITY)
-        mc.body.setVelocityX(100)
-        mc.body.setSize(20, 116, false)
-        mc.body.setOffset(90,10)
+
+        mc.body.setSize(mc.width-60, mc.height/2+40, false)
+        mc.body.setOffset(30,10)
+
+        // mc.testHitbox = scene.physics.add.sprite(mc.x, mc.y, null)
+        // mc.testHitbox.setSize(100, 100);
+        // mc.testHitbox.body.setAllowGravity(false)
+        // mc.testHitbox.setVisible(false)
          
     }
 
     execute(scene, mc) {
         const { KEYS } = scene
+
+        if (mc.flipX){
+            mc.attackHitbox.setPosition(mc.x-60, mc.y)  
+        }
+        if (!mc.flipX){
+            mc.attackHitbox.setPosition(mc.x+60, mc.y)
+
+        }
+
 
         let grounded = mc.body.velocity.y == 0
         // end jump
@@ -200,20 +232,22 @@ class AttackState extends State {
 
         // handle movement
         if(KEYS.LEFT.isDown) {
-            mc.body.setSize(20, 116, false)
-            mc.body.setOffset(0,10)
+            
+            mc.attackHitbox.setPosition(mc.x-60, mc.y)
+            mc.body.setSize(mc.width-60, mc.height/2+40, false)
+            mc.body.setOffset(30,10)
             mc.setFlip(true)
             mc.body.setVelocityX(-mc.WALK_VELOCITY)  // slower speed in air, maybe don't we'll see
         }
 
         if(KEYS.RIGHT.isDown) {
-            mc.body.setSize(20, 116, false)
-            mc.body.setOffset(90,10)
+            mc.attackHitbox.setPosition(mc.x+60, mc.y)
+            mc.body.setSize(mc.width-60, mc.height/2+40, false)
+            mc.body.setOffset(30,10)
             mc.resetFlip()
             mc.body.setVelocityX(mc.WALK_VELOCITY)
         }
     }
-
 
 
 }

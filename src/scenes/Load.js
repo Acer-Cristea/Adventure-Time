@@ -7,6 +7,11 @@ class Load extends Phaser.Scene {
 
         this.load.path = "./assets/"
 
+        this.load.image("title", "title.png")
+
+        this.load.image("death", "death.png")
+        
+
         this.load.image("TB", "Top_Border.png")
 
         this.load.spritesheet('mc-sheet', 'mc-sheet.png', {
@@ -55,7 +60,7 @@ class Load extends Phaser.Scene {
 
         this.anims.create({
             key: "mc-jump",
-            frameRate: 3,
+            frameRate: 4,
             repeat: 0,
             frames: this.anims.generateFrameNumbers("mc-sheet", {frames: [0, 1]})
         })

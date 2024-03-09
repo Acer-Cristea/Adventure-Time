@@ -19,6 +19,6 @@ class Keys extends Phaser.Scene {
         })
 
         // launch next scene so it will run concurrently with this one
-        this.scene.launch('scenePlay')
+        this.scene.launch('sceneMenu')
     }
 }
