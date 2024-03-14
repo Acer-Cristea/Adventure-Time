@@ -8,11 +8,11 @@ class Load extends Phaser.Scene {
         this.load.path = "./assets/"
 
         this.load.image("title", "title.png")
-
         this.load.image("death", "death.png")
-        
-
         this.load.image("TB", "Top_Border.png")
+        this.load.image("coin", "coin.png")
+        this.load.image("fire", "fire.png")
+        this.load.image("life", "life.png")
 
         this.load.spritesheet('mc-sheet', 'mc-sheet.png', {
             frameWidth: 115,

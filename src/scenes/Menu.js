@@ -6,9 +6,25 @@ class Menu extends Phaser.Scene {
     create() {
 
 
+        let menuConfig = {
+            fontFamily: "Comic Sans MS",
+            fontSize: "35px",
+            color: "#FFFFFF",
+            align: "right",
+            padding: {
+              top: 5,
+              bottom: 5,
+            },
+            fixedWidth: 0
+        }
+
+
         this.KEYS = this.scene.get('sceneKeys').KEYS
     
         this.add.image(0,0,"title").setOrigin(0)
+
+        this.add.text(game.config.width/2+600, game.config.height/2 + 235, "Press ↑ to Start",
+        menuConfig).setOrigin(0.5)
 
 
     }

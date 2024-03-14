@@ -15,34 +15,81 @@ class Play extends Phaser.Scene {
 
         this.map = this.add.tilemap('Map') //create tilemap
         this.tileset = this.map.addTilesetImage("Base", "tilesetImage")
-        this.bkgLayer = this.map.createLayer("bkg", this.tileset, 400 ,200)
+        this.bkgLayer = this.map.createLayer("bkg", this.tileset, 0 ,0)
         this.colLayer = this.map.createLayer("col", this.tileset,0,0)
-
         this.colLayer.setCollisionByProperty({collides: true})
-
+        
+        // create mc        
         this.mcSpawn = this.map.findObject("spawn", (obj) => obj.name === "mcSpawn")
-
-
-        // create mc
         this.mc = new MC(this, this.mcSpawn.x, this.mcSpawn.y, "mc-sheet", 0)
         this.mc.anims.play("mc-idle")
 
-
+        // add lives by creating three assets, then saying if life one visible when the it occurs set false, else if live 2 visible set to false, else if life 3...
         //create bee
-
         this.beeSpawn = this.map.findObject("bee_spawn", (obj) => obj.name === "beeSpawn")
-
         this.bee = this.physics.add.sprite(this.beeSpawn.x,this.beeSpawn.y , "bee", 0)
         this.bee.setSize(200,200)
-        //this.bee.anims.play("bee-walk")
         this.bee.body.setImmovable(true)
-        // colliders
+
+        this.fireSpawn = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn")
+        this.fire = this.physics.add.sprite(this.fireSpawn.x,this.fireSpawn.y ,"fire")
+        this.fire.setImmovable(true)
+        this.fire.body.setCollideWorldBounds(true)
+        //this.fire.anims.play("fire-idle")
+
+        this.coinSpawn1 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn1")
+        this.coin1 = this.physics.add.sprite(this.coinSpawn1.x,this.coinSpawn1.y ,"coin")
+        this.coin1.setImmovable(true)
+        this.coin1.body.setAllowGravity(false)   
+
+        this.coinSpawn2 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn2")
+        this.coin2 = this.physics.add.sprite(this.coinSpawn2.x,this.coinSpawn2.y ,"coin")
+        this.coin2.setImmovable(true)
+        this.coin2.body.setAllowGravity(false)  
+
+        this.coinSpawn3 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn3")
+        this.coin3 = this.physics.add.sprite(this.coinSpawn3.x,this.coinSpawn3.y ,"coin")
+        this.coin3.setImmovable(true)
+        this.coin3.body.setAllowGravity(false)  
+
+        this.coinSpawn4 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn4")
+        this.coin4 = this.physics.add.sprite(this.coinSpawn4.x,this.coinSpawn4.y ,"coin")
+        this.coin4.setImmovable(true)
+        this.coin4.body.setAllowGravity(false)  
+
+        this.coinSpawn5 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn5")
+        this.coin5 = this.physics.add.sprite(this.coinSpawn5.x,this.coinSpawn5.y ,"coin")
+        this.coin5.setImmovable(true)
+        this.coin5.body.setAllowGravity(false)  
+
+        this.coinSpawn6 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn6")
+        this.coin6 = this.physics.add.sprite(this.coinSpawn6.x,this.coinSpawn6.y ,"coin")
+        this.coin6.setImmovable(true)
+        this.coin6.body.setAllowGravity(false)  
+
+        this.coinSpawn7 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn7")
+        this.coin7 = this.physics.add.sprite(this.coinSpawn7.x,this.coinSpawn7.y ,"coin")
+        this.coin7.setImmovable(true)
+        this.coin7.body.setAllowGravity(false)  
+
+        this.coinSpawn8 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn8")
+        this.coin8 = this.physics.add.sprite(this.coinSpawn8.x,this.coinSpawn8.y ,"coin")
+        this.coin8.setImmovable(true)
+        this.coin8.body.setAllowGravity(false)  
+
+
         this.physics.add.collider(this.mc, this.colLayer)
-
         this.physics.add.collider(this.bee, this.colLayer)
-
         this.physics.add.collider(this.mc, this.bee, this.handleCollision, null, this)
-        
+        this.physics.add.collider(this.mc, this.fire, this.handleCollisionF, null, this)
+        this.physics.add.collider(this.mc, this.coin1, this.handleCollisionC, null, this)
+        this.physics.add.collider(this.mc, this.coin2, this.handleCollisionC, null, this)
+        this.physics.add.collider(this.mc, this.coin3, this.handleCollisionC, null, this)
+        this.physics.add.collider(this.mc, this.coin4, this.handleCollisionC, null, this)
+        this.physics.add.collider(this.mc, this.coin5, this.handleCollisionC, null, this)
+        this.physics.add.collider(this.mc, this.coin6, this.handleCollisionC, null, this)
+        this.physics.add.collider(this.mc, this.coin7, this.handleCollisionC, null, this)
+        this.physics.add.collider(this.mc, this.coin8, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc.attackHitbox, this.bee, this.handleAttack, null, this)
 
         this.uiCamera = this.cameras.add(0, 0, 1600, 100)
@@ -59,28 +106,26 @@ class Play extends Phaser.Scene {
         this.cameras.main.startFollow(this.mc, true)
         this.physics.world.setBounds(0,0, this.map.widthInPixels, this.map.heightInPixels)
         this.score = 0
+
+        this.life1 = this.add.image(375, 30, "life").setOrigin(0)
+        this.life2 = this.add.image(275, 30, "life").setOrigin(0)
+        this.life3 = this.add.image(175, 30, "life").setOrigin(0)
+
+
+
         this.scoreText = this.add.text(650, 25, ('Score: ' + this.score), { fontSize: '50px', fill: '#ffffff' })
         this.scoreText.setScrollFactor(0)
 
-        this.lives = 3
-        this.livesText = this.add.text(40,25, ('Lives: ' + this.lives), { fontSize: '50px', fill: '#ffffff' } )
-
-        //add in lives, swing animation, create a hitbox on swing
-        //
 
     }
 
     update() {
 
-        if(this.lives == 0){
-            this.scene.start('sceneDeath')
-        }
-
         // get local KEYS reference
         const { KEYS } = this
 
 
-        const distanceThreshold = 400
+        const distanceThreshold = 800
         const distance = Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bee.x, this.bee.y)
 
         //console.log("distance: ", distance)
@@ -107,13 +152,11 @@ class Play extends Phaser.Scene {
         this.mcFSM.step()
 
 
-        //console.log('Player position:', this.mc.x, this.mc.y);
-        //console.log('Camera position:', this.cameras.main.scrollX, this.cameras.main.scrollY);
 
     }
 
     handleAttack(attackHitbox, bee){
-        console.log("Bee destroyed")
+        //console.log("Bee destroyed")
         //this.physics.world.removeCollider(this.bee.body.collider, this.colLayer)
         bee.destroy()
 
@@ -123,13 +166,42 @@ class Play extends Phaser.Scene {
     }
 
     handleCollision(mc, bee){
-        console.log("Bee attacks!")
-        this.lives -= 1
 
-        this.livesText.setText('Lives: ' + this.lives)
+        if (this.life1.visible){
+            this.life1.setVisible(false)
+        }else if (this.life2.visible){
+            this.life2.setVisible(false)
+
+        }else if (this.life3.visible){
+            this.scene.start('sceneDeath')        
+        }
+
+
 
         mc.setPosition(this.mcSpawn.x, this.mcSpawn.y)    
         bee.setPosition(this.beeSpawn.x, this.beeSpawn.y)
         bee.setVelocityX(0)
+    }
+
+    handleCollisionF(mc, fire){
+
+        if (this.life1.visible){
+            this.life1.setVisible(false)
+        }else if (this.life2.visible){
+            this.life2.setVisible(false)
+
+        }else if (this.life3.visible){
+            this.scene.start('sceneDeath')        
+        }
+
+        mc.setPosition(this.mcSpawn.x, this.mcSpawn.y)    
+    }
+
+    handleCollisionC(mc, coin){
+
+        coin.destroy()
+        this.score += 31.25
+
+        this.scoreText.setText('Score: ' + this.score)
     }
 }

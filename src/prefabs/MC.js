@@ -6,7 +6,7 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this)
 
         // define custom properties
-        this.WALK_VELOCITY = 400
+        this.WALK_VELOCITY = 250
         this.JUMP_VELOCITY = -450
         //maybe you get a boost in the x direction too?
         //add acceleration for jumping maybe
