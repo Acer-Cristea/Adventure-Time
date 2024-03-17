@@ -8,6 +8,14 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+        this.music = this.sound.add("background_music", {loop: true, volume: 0.15})
+        this.attack_sound = this.sound.add('attack-sfx', { volume: 0.1 })
+        this.coin_sound1 = this.sound.add('coin-sfx1', { volume: 0.05 })
+        this.coin_sound2 = this.sound.add('coin-sfx2', { volume: 0.05 })
+        this.coin_sound3 = this.sound.add('coin-sfx3', { volume: 0.05 })
+
+
+        //this.music.play()
         console.log('Play: create')
 
         // grab keyboard binding from Keys scene
@@ -158,6 +166,7 @@ class Play extends Phaser.Scene {
     handleAttack(attackHitbox, bee){
         //console.log("Bee destroyed")
         //this.physics.world.removeCollider(this.bee.body.collider, this.colLayer)
+        this.attack_sound.play()
         bee.destroy()
 
         this.score += 500
@@ -173,6 +182,7 @@ class Play extends Phaser.Scene {
             this.life2.setVisible(false)
 
         }else if (this.life3.visible){
+            this.music.stop()
             this.scene.start('sceneDeath')        
         }
 
@@ -191,6 +201,7 @@ class Play extends Phaser.Scene {
             this.life2.setVisible(false)
 
         }else if (this.life3.visible){
+            this.music.stop()
             this.scene.start('sceneDeath')        
         }
 
@@ -198,6 +209,11 @@ class Play extends Phaser.Scene {
     }
 
     handleCollisionC(mc, coin){
+        this.coin_sound1.play()
+        this.coin_sound2.play()
+        //this.coin_sound3.play()
+        
+
 
         coin.destroy()
         this.score += 31.25

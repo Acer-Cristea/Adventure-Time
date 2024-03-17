@@ -23,8 +23,6 @@ class Menu extends Phaser.Scene {
     
         this.add.image(0,0,"title").setOrigin(0)
 
-        this.add.text(game.config.width/2+600, game.config.height/2 + 235, "Press ↑ to Start",
-        menuConfig).setOrigin(0.5)
 
 
     }

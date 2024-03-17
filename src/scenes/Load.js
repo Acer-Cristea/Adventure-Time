@@ -36,9 +36,18 @@ class Load extends Phaser.Scene {
         this.load.tilemapTiledJSON('Map', 'Map.json')
 
         this.load.path = './assets/sounds/'
-
+        this.load.audio("walk-sfx", "walk.wav")
         this.load.audio("jump-sfx1", "sj.wav")
         this.load.audio("jump-sfx2", "ej.wav")
+        this.load.audio("background_music", "background_music.mp3")
+        this.load.audio("attack-sfx", "attack.wav")
+        this.load.audio("attack-sfx1", "attack1.wav")
+        this.load.audio("coin-sfx1", "coin_pickup1.wav")
+        this.load.audio("coin-sfx2", "coin_pickup2.wav")
+        this.load.audio("coin-sfx3", "coin_pickup3.wav")
+
+       
+
 
     }
 

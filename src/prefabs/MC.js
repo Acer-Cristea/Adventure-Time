@@ -23,6 +23,9 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         this.attackHitbox.setSize(10, 10);
         this.attackHitbox.body.setAllowGravity(false)
         this.attackHitbox.setVisible(false)
+
+        this.walkSound = scene.sound.add('walk-sfx', { volume: 0.05 })
+
         
         // initialize state machine
         scene.mcFSM = new StateMachine('idle', {
@@ -93,6 +96,20 @@ class WalkState extends State {
 
         mc.anims.play('mc-walk')
 
+
+        // // Start playing walk sound Couldn't get this to work well :(
+        // mc.walkSound.play()
+
+        // // Add event listener for when the sound completes
+        // mc.walkSound.on('complete', () => {
+        //     // If the character is still walking, play the sound again after the delay
+        //     if (this.stateMachine.state == 'walk') {
+        //         setTimeout(() => {
+        //             // Call the event listener recursively after the delay
+        //             mc.walkSound.play()
+        //         }, 450) // Adjust the delay time (in milliseconds) as needed
+        //     }
+        // })
         
     }
 
@@ -102,22 +119,26 @@ class WalkState extends State {
         const { KEYS } = scene
         const grounded = mc.body.velocity.y == 0
 
-        
+
 
         // jump
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP) && grounded) {
             mc.anims.stop("mc-walk")
+            //mc.walkSound.stop()
             this.stateMachine.transition('jump')
         }
 
         // attack
         if(Phaser.Input.Keyboard.JustDown(KEYS.ATTACK) && grounded) {
+           // mc.walkSound.stop()
             this.stateMachine.transition('attack')
         }
 
         // back to idle
         if( (!( KEYS.LEFT.isDown || KEYS.RIGHT.isDown ) && mc.body.velocity.x == 0) ) {
             mc.anims.stop("mc-walk")
+
+            //mc.walkSound.stop()
             this.stateMachine.transition('idle')
         }
 
@@ -143,26 +164,28 @@ class WalkState extends State {
 //buuuoh sound effect when jumping
 class JumpState extends State {
     enter(scene, mc) {
+
+        //mc.walkSound.stop()
         mc.anims.play('mc-jump')
         mc.body.setVelocityY(mc.JUMP_VELOCITY)
         mc.body.setSize(mc.width-60, mc.height/2+40, false)
         mc.body.setOffset(30,10)
 
         // play sfx
-        const sound1 = scene.sound.add('jump-sfx1', { volume: 0.05 });
+        const sound1 = scene.sound.add('jump-sfx1', { volume: 0.1 })
         sound1.on('complete', () => {
             // Add a delay before playing the second sound effect
             setTimeout(() => {
                 // Play the second sound effect after the delay
-                const sound2 = scene.sound.add('jump-sfx2', { volume: 0.05 });
+                const sound2 = scene.sound.add('jump-sfx2', { volume: 0.1 })
                 sound2.on('complete', () => {
                     // Transition to the next state when the second sound finishes
                     this.stateMachine.transition('idle');
                 });
-                sound2.play();
-            }, 600); // Adjust the delay time (in milliseconds) as needed
-        });
-        sound1.play();
+                sound2.play()
+            }, 600) // Adjust the delay time (in milliseconds) as needed
+        })
+        sound1.play()
     }
 
     execute(scene, mc) {
@@ -199,6 +222,10 @@ class AttackState extends State {
     enter(scene, mc) {
         //fix flipping issue
         //console.log("In AttackState")
+        const sound = scene.sound.add('attack-sfx1', { volume: 0.1 })
+        sound.play()
+
+
         mc.anims.play('mc-attack')
         mc.body.setVelocityY(mc.JUMP_VELOCITY)
 
