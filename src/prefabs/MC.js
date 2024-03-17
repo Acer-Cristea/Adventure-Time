@@ -24,6 +24,11 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         this.attackHitbox.body.setAllowGravity(false)
         this.attackHitbox.setVisible(false)
 
+        this.bombHitbox = scene.physics.add.sprite(40, 40, null)
+        this.bombHitbox.setSize(40, 40)
+        this.bombHitbox.body.setAllowGravity(false)
+        this.bombHitbox.setVisible(true)
+
         this.walkSound = scene.sound.add('walk-sfx', { volume: 0.05 })
 
         
@@ -32,7 +37,8 @@ class MC extends Phaser.Physics.Arcade.Sprite {
             idle: new IdleState(),
             walk: new WalkState(),
             jump: new JumpState(),
-            attack: new AttackState()
+            attack: new AttackState(),
+            bomb: new BombState(),
         }, [scene, this])
     }
 }
@@ -79,6 +85,11 @@ class IdleState extends State {
         // attack
         if(Phaser.Input.Keyboard.JustDown(KEYS.ATTACK) && grounded) {
             this.stateMachine.transition('attack')
+        }
+
+        // bomb_attack
+        if(Phaser.Input.Keyboard.JustDown(KEYS.BOMB) && grounded) {
+            this.stateMachine.transition('bomb')
         }
 
         // left/right to move
@@ -132,6 +143,11 @@ class WalkState extends State {
         if(Phaser.Input.Keyboard.JustDown(KEYS.ATTACK) && grounded) {
            // mc.walkSound.stop()
             this.stateMachine.transition('attack')
+        }
+
+        // bomb_attack
+        if(Phaser.Input.Keyboard.JustDown(KEYS.BOMB) && grounded) {
+            this.stateMachine.transition('bomb')
         }
 
         // back to idle
@@ -275,6 +291,48 @@ class AttackState extends State {
             mc.body.setVelocityX(mc.WALK_VELOCITY)
         }
     }
+}
+
+class BombState extends State {
+    enter(scene, mc) {
+        //fix flipping issue
+        //console.log("In AttackState")
+
+        mc.anims.play('mc-bomb')
+
+        mc.bombHitbox.setPosition(mc.x, mc.y-80)
+
+        if (mc.flipX){       
+            mc.bombHitbox.setVelocityX(-150)
+            mc.bombHitbox.setVelocityY(60)
+        }
+
+        if (!mc.flipX){    
+            mc.bombHitbox.setVelocityX(150)
+            mc.bombHitbox.setVelocityY(60)
+        }
 
 
+         
+    }
+
+    execute(scene, mc) {
+        const { KEYS } = scene
+        mc.body.setSize(45, mc.height, true)
+        mc.body.setOffset(15,0)  
+
+        mc.setVelocityX(0)
+        mc.setVelocityY(0)
+
+        let transition = mc.bombHitbox.body.velocity.y == 0
+
+        if (transition){
+            mc.bombHitbox.setPosition(40, 40)
+            mc.bombHitbox.setVelocityX(0)
+            mc.bombHitbox.setVelocityY(0)
+            this.stateMachine.transition("idle")
+        }
+
+
+    }
 }

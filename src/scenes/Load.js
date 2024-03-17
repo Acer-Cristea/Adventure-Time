@@ -24,6 +24,11 @@ class Load extends Phaser.Scene {
             frameHeight: 116
         })
 
+        this.load.spritesheet('mc-bomb-sheet', 'mc-bomb-sheet.png', {
+            frameWidth: 80,
+            frameHeight: 116
+        })
+
         this.load.spritesheet("bee", "bee_moves.png", {
             frameWidth: 290,
             frameHeight: 245
@@ -86,7 +91,14 @@ class Load extends Phaser.Scene {
             frameRate: 4,
             repeat: 0,
             frames: this.anims.generateFrameNumbers("bee", {frames: [0, 1]})
-        })    
+        })   
+        
+        this.anims.create({
+            key: "mc-bomb",
+            frameRate: 6,
+            repeat: 0.,
+            frames: this.anims.generateFrameNumbers("mc-bomb-sheet",{frames: [1, 2, 3]})
+        })
 
         this.scene.start('sceneKeys')
     }

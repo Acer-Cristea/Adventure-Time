@@ -99,6 +99,8 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mc, this.coin7, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc, this.coin8, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc.attackHitbox, this.bee, this.handleAttack, null, this)
+        this.physics.add.collider(this.mc.bombHitbox, this.colLayer)
+        this.physics.add.collider(this.mc.bombHitbox, this.bee, this.handleBombBee, null, this)
 
         this.uiCamera = this.cameras.add(0, 0, 1600, 100)
         this.uiCamera.setScroll(0, 0) // Position the UI camera at the top-left corner of the game window
@@ -220,4 +222,16 @@ class Play extends Phaser.Scene {
 
         this.scoreText.setText('Score: ' + this.score)
     }
+
+    handleBombBee(bomb, bee){
+        bee.destroy()
+        bomb.setVisible(false)
+        bomb.setVelocityY(500)
+
+
+        this.score += 500
+
+        this.scoreText.setText('Score: ' + this.score)
+    }
+
 }

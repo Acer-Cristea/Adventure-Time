@@ -13,6 +13,7 @@ class Keys extends Phaser.Scene {
         this.KEYS = this.input.keyboard.addKeys({
             JUMP:   KeyCodes.UP,
             ATTACK: KeyCodes.D,
+            BOMB:   KeyCodes.B,
             LEFT:   KeyCodes.LEFT,
             RIGHT:  KeyCodes.RIGHT,
             PAUSE:  KeyCodes.P
