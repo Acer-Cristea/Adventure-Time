@@ -16,7 +16,7 @@ class Play extends Phaser.Scene {
 
 
         //this.music.play()
-        console.log('Play: create')
+        //console.log('Play: create')
 
         // grab keyboard binding from Keys scene
         this.KEYS = this.scene.get('sceneKeys').KEYS
@@ -38,6 +38,11 @@ class Play extends Phaser.Scene {
         this.bee = this.physics.add.sprite(this.beeSpawn.x,this.beeSpawn.y , "bee", 0)
         this.bee.setSize(200,200)
         this.bee.body.setImmovable(true)
+
+        this.bunnySpawn = this.map.findObject("bunny_spawn", (obj) => obj.name === "bunnySpawn")
+        this.bunny = this.physics.add.sprite(this.bunnySpawn.x,this.bunnySpawn.y , "bunny", 0)
+        this.bunny.setSize(250,250)
+        this.bunny.body.setImmovable(true)
 
         this.fireSpawn = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn")
         this.fire = this.physics.add.sprite(this.fireSpawn.x,this.fireSpawn.y ,"fire")
@@ -88,7 +93,9 @@ class Play extends Phaser.Scene {
 
         this.physics.add.collider(this.mc, this.colLayer)
         this.physics.add.collider(this.bee, this.colLayer)
+        this.physics.add.collider(this.bunny, this.colLayer)
         this.physics.add.collider(this.mc, this.bee, this.handleCollision, null, this)
+        this.physics.add.collider(this.mc, this.bunny, this.handleCollisionBunny, null, this)
         this.physics.add.collider(this.mc, this.fire, this.handleCollisionF, null, this)
         this.physics.add.collider(this.mc, this.coin1, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc, this.coin2, this.handleCollisionC, null, this)
@@ -99,8 +106,11 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mc, this.coin7, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc, this.coin8, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc.attackHitbox, this.bee, this.handleAttack, null, this)
+        this.physics.add.collider(this.mc.attackHitbox, this.bunny, this.handleAttackBunny, null, this)
         this.physics.add.collider(this.mc.bombHitbox, this.colLayer)
         this.physics.add.collider(this.mc.bombHitbox, this.bee, this.handleBombBee, null, this)
+        this.physics.add.collider(this.mc.bombHitbox, this.bunny, this.handleBombBunny, null, this)
+
 
         this.uiCamera = this.cameras.add(0, 0, 1600, 100)
         this.uiCamera.setScroll(0, 0) // Position the UI camera at the top-left corner of the game window
@@ -110,8 +120,8 @@ class Play extends Phaser.Scene {
         this.add.image(0, 0, "TB").setOrigin(0).setScrollFactor(0) // Render TP image at the top-left corner of the UI camera viewport
 
         //camera stuff
-        console.log("mapwidth in pixels: ",this.map.widthInPixels)
-        console.log("mapheight in pixels: ",this.map.heightInPixels)  
+        //console.log("mapwidth in pixels: ",this.map.widthInPixels)
+        //console.log("mapheight in pixels: ",this.map.heightInPixels)  
         this.cameras.main.setBounds(0,0, this.map.widthInPixels, this.map.heightInPixels)
         this.cameras.main.startFollow(this.mc, true)
         this.physics.world.setBounds(0,0, this.map.widthInPixels, this.map.heightInPixels)
@@ -121,10 +131,14 @@ class Play extends Phaser.Scene {
         this.life2 = this.add.image(275, 30, "life").setOrigin(0)
         this.life3 = this.add.image(175, 30, "life").setOrigin(0)
 
+        this.bomb = this.add.image(1250, 20, "bomb").setOrigin(0)
+
 
 
         this.scoreText = this.add.text(650, 25, ('Score: ' + this.score), { fontSize: '50px', fill: '#ffffff' })
         this.scoreText.setScrollFactor(0)
+        this.count = 0
+
 
 
     }
@@ -176,6 +190,30 @@ class Play extends Phaser.Scene {
         this.scoreText.setText('Score: ' + this.score)
     }
 
+    handleAttackBunny(attackHitbox, bunny){
+        this.count += 0.2
+        
+
+        console.log(this.count)
+        if (this.count > 0 && this.count == 0.2) {
+            this.attack_sound.play()
+
+        }
+        
+        if (this.count >= 2) {
+            this.attack_sound.play()
+            bunny.destroy()
+
+            
+        this.score += 800
+
+        this.scoreText.setText('Score: ' + this.score)
+
+        this.count = 0
+        }
+
+    }
+
     handleCollision(mc, bee){
 
         if (this.life1.visible){
@@ -193,6 +231,24 @@ class Play extends Phaser.Scene {
         mc.setPosition(this.mcSpawn.x, this.mcSpawn.y)    
         bee.setPosition(this.beeSpawn.x, this.beeSpawn.y)
         bee.setVelocityX(0)
+    }
+
+    handleCollisionBunny(mc, bunny){
+
+        if (this.life1.visible){
+            this.life1.setVisible(false)
+        }else if (this.life2.visible){
+            this.life2.setVisible(false)
+
+        }else if (this.life3.visible){
+            this.music.stop()
+            this.scene.start('sceneDeath')        
+        }
+
+
+
+        mc.setPosition(this.mcSpawn.x, this.mcSpawn.y)    
+        bunny.setPosition(this.bunnySpawn.x, this.bunnySpawn.y)
     }
 
     handleCollisionF(mc, fire){
@@ -230,6 +286,17 @@ class Play extends Phaser.Scene {
 
 
         this.score += 500
+
+        this.scoreText.setText('Score: ' + this.score)
+    }
+
+    handleBombBunny(bomb, bunny){
+        bunny.destroy()
+        bomb.setVisible(false)
+        bomb.setVelocityY(500)
+
+
+        this.score += 800
 
         this.scoreText.setText('Score: ' + this.score)
     }

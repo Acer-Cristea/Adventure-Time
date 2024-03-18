@@ -24,10 +24,12 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         this.attackHitbox.body.setAllowGravity(false)
         this.attackHitbox.setVisible(false)
 
-        this.bombHitbox = scene.physics.add.sprite(40, 40, null)
+        this.bombHitbox = scene.physics.add.sprite(1250, 35, "bomb")
         this.bombHitbox.setSize(40, 40)
+        this.bombHitbox.setOffset(0, 20)
         this.bombHitbox.body.setAllowGravity(false)
-        this.bombHitbox.setVisible(true)
+        this.bombHitbox.body.setCollideWorldBounds(true)
+
 
         this.walkSound = scene.sound.add('walk-sfx', { volume: 0.05 })
 
@@ -121,6 +123,7 @@ class WalkState extends State {
         //         }, 450) // Adjust the delay time (in milliseconds) as needed
         //     }
         // })
+
         
     }
 
@@ -130,7 +133,14 @@ class WalkState extends State {
         const { KEYS } = scene
         const grounded = mc.body.velocity.y == 0
 
-
+        if (!this.hasPlayedSound && scene.time.now % 500 < 250) {
+            mc.walkSound.play()
+            this.hasPlayedSound = true
+        } else if (this.hasPlayedSound && scene.time.now % 500 >= 250) {
+            // Stop the sound if it has been played and the interval has passed
+            mc.walkSound.stop()
+            this.hasPlayedSound = false
+        }
 
         // jump
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP) && grounded) {
@@ -300,16 +310,20 @@ class BombState extends State {
 
         mc.anims.play('mc-bomb')
 
+        mc.bombHitbox.body.setAllowGravity(true)
+
         mc.bombHitbox.setPosition(mc.x, mc.y-80)
 
         if (mc.flipX){       
-            mc.bombHitbox.setVelocityX(-150)
-            mc.bombHitbox.setVelocityY(60)
+            mc.bombHitbox.setVelocityX(-500)
+            mc.bombHitbox.setVelocityY(-50)
+
         }
 
         if (!mc.flipX){    
-            mc.bombHitbox.setVelocityX(150)
-            mc.bombHitbox.setVelocityY(60)
+            mc.bombHitbox.setVelocityX(500)
+            mc.bombHitbox.setVelocityY(-300)
+
         }
 
 
@@ -329,7 +343,7 @@ class BombState extends State {
         if (transition){
             mc.bombHitbox.setPosition(40, 40)
             mc.bombHitbox.setVelocityX(0)
-            mc.bombHitbox.setVelocityY(0)
+            mc.bombHitbox.body.setAllowGravity(false)
             this.stateMachine.transition("idle")
         }
 

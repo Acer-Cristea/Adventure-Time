@@ -13,6 +13,10 @@ class Load extends Phaser.Scene {
         this.load.image("coin", "coin.png")
         this.load.image("fire", "fire.png")
         this.load.image("life", "life.png")
+        this.load.image("bunny", "bunny.png")
+        this.load.image("bomb", "bomb.png")
+        this.load.image("bmo", "BMO.png")
+
 
         this.load.spritesheet('mc-sheet', 'mc-sheet.png', {
             frameWidth: 115,
@@ -24,11 +28,10 @@ class Load extends Phaser.Scene {
             frameHeight: 116
         })
 
-        this.load.spritesheet('mc-bomb-sheet', 'mc-bomb-sheet.png', {
+        this.load.spritesheet('mc-bomb-sheet1', 'mc-bomb-sheet1.png', {
             frameWidth: 80,
             frameHeight: 116
         })
-
         this.load.spritesheet("bee", "bee_moves.png", {
             frameWidth: 290,
             frameHeight: 245
@@ -50,6 +53,9 @@ class Load extends Phaser.Scene {
         this.load.audio("coin-sfx1", "coin_pickup1.wav")
         this.load.audio("coin-sfx2", "coin_pickup2.wav")
         this.load.audio("coin-sfx3", "coin_pickup3.wav")
+
+        this.load.path = './assets/fonts/'
+        this.load.bitmapFont('Pixel', 'Pixel.png', 'Pixel.xml')
 
        
 
@@ -87,6 +93,13 @@ class Load extends Phaser.Scene {
         })
 
         this.anims.create({
+            key: "mc-attack-instructions",
+            frameRate: 4,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers("mc-sheet", {frames: [5, 6, 7]})
+        })
+
+        this.anims.create({
             key: "bee-walk",
             frameRate: 4,
             repeat: 0,
@@ -95,9 +108,16 @@ class Load extends Phaser.Scene {
         
         this.anims.create({
             key: "mc-bomb",
-            frameRate: 6,
-            repeat: 0.,
-            frames: this.anims.generateFrameNumbers("mc-bomb-sheet",{frames: [1, 2, 3]})
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers("mc-bomb-sheet1",{frames: [1, 2, 4, 3]})
+        })
+
+        this.anims.create({
+            key: "mc-bomb-instructions",
+            frameRate: 4,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers("mc-bomb-sheet1",{frames: [1, 2, 4, 3]})
         })
 
         this.scene.start('sceneKeys')
