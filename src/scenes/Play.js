@@ -8,14 +8,14 @@ class Play extends Phaser.Scene {
     }
 
     create() {
-        this.music = this.sound.add("background_music", {loop: true, volume: 0.15})
+        this.music = this.sound.add("background_music", {loop: true, volume: 0.1})
         this.attack_sound = this.sound.add('attack-sfx', { volume: 0.1 })
         this.coin_sound1 = this.sound.add('coin-sfx1', { volume: 0.05 })
         this.coin_sound2 = this.sound.add('coin-sfx2', { volume: 0.05 })
         this.coin_sound3 = this.sound.add('coin-sfx3', { volume: 0.05 })
 
 
-        //this.music.play()
+        this.music.play()
         //console.log('Play: create')
 
         // grab keyboard binding from Keys scene
@@ -44,11 +44,23 @@ class Play extends Phaser.Scene {
         this.bunny.setSize(250,250)
         this.bunny.body.setImmovable(true)
 
-        this.fireSpawn = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn")
-        this.fire = this.physics.add.sprite(this.fireSpawn.x,this.fireSpawn.y ,"fire")
+        this.fireSpawn1 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn1")
+        this.fire = this.physics.add.sprite(this.fireSpawn1.x,this.fireSpawn1.y ,"fire")
         this.fire.setImmovable(true)
         this.fire.body.setCollideWorldBounds(true)
-        //this.fire.anims.play("fire-idle")
+        this.fire.anims.play("fire-idle")
+
+        this.fireSpawn2 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn2")
+        this.fire = this.physics.add.sprite(this.fireSpawn2.x,this.fireSpawn2.y ,"smallFire")
+        this.fire.setImmovable(true)
+        this.fire.body.setCollideWorldBounds(true)
+        this.fire.anims.play("small-fire-idle")
+
+        this.fireSpawn3 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn3")
+        this.fire = this.physics.add.sprite(this.fireSpawn3.x,this.fireSpawn3.y ,"smallFire")
+        this.fire.setImmovable(true)
+        this.fire.body.setCollideWorldBounds(true)
+        this.fire.anims.play("small-fire-idle")
 
         this.coinSpawn1 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn1")
         this.coin1 = this.physics.add.sprite(this.coinSpawn1.x,this.coinSpawn1.y ,"coin")
@@ -107,7 +119,7 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mc, this.coin8, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc.attackHitbox, this.bee, this.handleAttack, null, this)
         this.physics.add.collider(this.mc.attackHitbox, this.bunny, this.handleAttackBunny, null, this)
-        this.physics.add.collider(this.mc.bombHitbox, this.colLayer)
+        this.physics.add.collider(this.mc.bombHitbox, this.colLayer, this.handleLayerBomb, null, this)
         this.physics.add.collider(this.mc.bombHitbox, this.bee, this.handleBombBee, null, this)
         this.physics.add.collider(this.mc.bombHitbox, this.bunny, this.handleBombBunny, null, this)
 
@@ -131,11 +143,13 @@ class Play extends Phaser.Scene {
         this.life2 = this.add.image(275, 30, "life").setOrigin(0)
         this.life3 = this.add.image(175, 30, "life").setOrigin(0)
 
+
         this.bomb = this.add.image(1250, 20, "bomb").setOrigin(0)
 
 
+        this.scoreText = this.add.bitmapText(650, 15, "PixelScore", ('SCORE: ' + this.score), 60)
+        
 
-        this.scoreText = this.add.text(650, 25, ('Score: ' + this.score), { fontSize: '50px', fill: '#ffffff' })
         this.scoreText.setScrollFactor(0)
         this.count = 0
 
@@ -187,7 +201,7 @@ class Play extends Phaser.Scene {
 
         this.score += 500
 
-        this.scoreText.setText('Score: ' + this.score)
+        this.scoreText.setText('SCORE: ' + this.score)
     }
 
     handleAttackBunny(attackHitbox, bunny){
@@ -207,7 +221,7 @@ class Play extends Phaser.Scene {
             
         this.score += 800
 
-        this.scoreText.setText('Score: ' + this.score)
+        this.scoreText.setText('SCORE: ' + this.score)
 
         this.count = 0
         }
@@ -276,7 +290,7 @@ class Play extends Phaser.Scene {
         coin.destroy()
         this.score += 31.25
 
-        this.scoreText.setText('Score: ' + this.score)
+        this.scoreText.setText('SCORE: ' + this.score)
     }
 
     handleBombBee(bomb, bee){
@@ -287,7 +301,7 @@ class Play extends Phaser.Scene {
 
         this.score += 500
 
-        this.scoreText.setText('Score: ' + this.score)
+        this.scoreText.setText('SCORE: ' + this.score)
     }
 
     handleBombBunny(bomb, bunny){
@@ -298,7 +312,14 @@ class Play extends Phaser.Scene {
 
         this.score += 800
 
-        this.scoreText.setText('Score: ' + this.score)
+        this.scoreText.setText('SCORE: ' + this.score)
     }
+
+    handleLayerBomb(bombT, colLayer){
+        bombT.setVisible(false)
+        this.bomb.setVisible(false)
+    }
+
+
 
 }

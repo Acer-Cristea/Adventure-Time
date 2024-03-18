@@ -109,21 +109,6 @@ class WalkState extends State {
 
         mc.anims.play('mc-walk')
 
-
-        // // Start playing walk sound Couldn't get this to work well :(
-        // mc.walkSound.play()
-
-        // // Add event listener for when the sound completes
-        // mc.walkSound.on('complete', () => {
-        //     // If the character is still walking, play the sound again after the delay
-        //     if (this.stateMachine.state == 'walk') {
-        //         setTimeout(() => {
-        //             // Call the event listener recursively after the delay
-        //             mc.walkSound.play()
-        //         }, 450) // Adjust the delay time (in milliseconds) as needed
-        //     }
-        // })
-
         
     }
 
@@ -248,7 +233,7 @@ class AttackState extends State {
     enter(scene, mc) {
         //fix flipping issue
         //console.log("In AttackState")
-        const sound = scene.sound.add('attack-sfx1', { volume: 0.1 })
+        const sound = scene.sound.add('attack-sfx1', { volume: 0.05 })
         sound.play()
 
 
@@ -288,9 +273,9 @@ class AttackState extends State {
             
             mc.attackHitbox.setPosition(mc.x-60, mc.y)
             mc.body.setSize(mc.width-60, mc.height/2+40, false)
-            mc.body.setOffset(30,10)
+            mc.body.setOffset(30,10) //adjust later
             mc.setFlip(true)
-            mc.body.setVelocityX(-mc.WALK_VELOCITY)  // slower speed in air, maybe don't we'll see
+            mc.body.setVelocityX(-mc.WALK_VELOCITY)  
         }
 
         if(KEYS.RIGHT.isDown) {
@@ -310,21 +295,29 @@ class BombState extends State {
 
         mc.anims.play('mc-bomb')
 
-        mc.bombHitbox.body.setAllowGravity(true)
+        if (mc.bombHitbox.body.enable){
 
-        mc.bombHitbox.setPosition(mc.x, mc.y-80)
+            mc.bombHitbox.body.setAllowGravity(true)
 
-        if (mc.flipX){       
-            mc.bombHitbox.setVelocityX(-500)
-            mc.bombHitbox.setVelocityY(-50)
+            mc.bombHitbox.setPosition(mc.x, mc.y-80)
 
+            if (mc.flipX){       
+                mc.bombHitbox.setVelocityX(-500)
+                mc.bombHitbox.setVelocityY(-300)
+
+            }
+
+            if (!mc.flipX){    
+                mc.bombHitbox.setVelocityX(500)
+                mc.bombHitbox.setVelocityY(-300)
+
+            }
         }
 
-        if (!mc.flipX){    
-            mc.bombHitbox.setVelocityX(500)
-            mc.bombHitbox.setVelocityY(-300)
-
+        else{
+            this.stateMachine.transition("idle")
         }
+
 
 
          
@@ -344,6 +337,7 @@ class BombState extends State {
             mc.bombHitbox.setPosition(40, 40)
             mc.bombHitbox.setVelocityX(0)
             mc.bombHitbox.body.setAllowGravity(false)
+            mc.bombHitbox.disableBody(true, true)
             this.stateMachine.transition("idle")
         }
 

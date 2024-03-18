@@ -11,7 +11,6 @@ class Load extends Phaser.Scene {
         this.load.image("death", "death.png")
         this.load.image("TB", "Top_Border.png")
         this.load.image("coin", "coin.png")
-        this.load.image("fire", "fire.png")
         this.load.image("life", "life.png")
         this.load.image("bunny", "bunny.png")
         this.load.image("bomb", "bomb.png")
@@ -37,6 +36,17 @@ class Load extends Phaser.Scene {
             frameHeight: 245
         })
 
+        this.load.spritesheet('fire', 'fire.png', {
+            frameWidth: 160,
+            frameHeight: 103
+        })
+
+
+        this.load.spritesheet('smallFire', 'smallFire.png', {
+            frameWidth: 120,
+            frameHeight: 103
+        })
+
         this.load.path = './assets/tilemaps/'
 
         this.load.image("tilesetImage", "tileset.png")
@@ -56,6 +66,8 @@ class Load extends Phaser.Scene {
 
         this.load.path = './assets/fonts/'
         this.load.bitmapFont('Pixel', 'Pixel.png', 'Pixel.xml')
+        this.load.bitmapFont('PixelScore', 'PixelScore.png', 'PixelScore.xml')
+
 
        
 
@@ -118,6 +130,20 @@ class Load extends Phaser.Scene {
             frameRate: 4,
             repeat: -1,
             frames: this.anims.generateFrameNumbers("mc-bomb-sheet1",{frames: [1, 2, 4, 3]})
+        })
+
+        this.anims.create({
+            key: 'fire-idle',
+            frameRate: 2,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('fire', { frames: [ 0, 1 ]} )
+        })
+
+        this.anims.create({
+            key: 'small-fire-idle',
+            frameRate: 2,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('smallFire', { frames: [ 0, 1 ]} )
         })
 
         this.scene.start('sceneKeys')

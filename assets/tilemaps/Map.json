@@ -3830,7 +3830,7 @@
                 {
                  "height":0,
                  "id":9,
-                 "name":"fireSpawn",
+                 "name":"fireSpawn1",
                  "point":true,
                  "rotation":0,
                  "type":"",
@@ -3838,6 +3838,30 @@
                  "width":0,
                  "x":2589.93181818182,
                  "y":1239.87878787879
+                }, 
+                {
+                 "height":0,
+                 "id":20,
+                 "name":"fireSpawn2",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":6072,
+                 "y":1206.5
+                }, 
+                {
+                 "height":0,
+                 "id":21,
+                 "name":"fireSpawn3",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":6417.5,
+                 "y":1202
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -3882,8 +3906,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":7268.2196969697,
-                 "y":990.856060606061
+                 "x":7386.40151515152,
+                 "y":996.916666666667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -4022,7 +4046,7 @@
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":20,
+ "nextobjectid":22,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
