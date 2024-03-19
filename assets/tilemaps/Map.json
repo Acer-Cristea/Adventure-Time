@@ -3848,8 +3848,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":6072,
-                 "y":1206.5
+                 "x":6068.79166666667,
+                 "y":1209.25
                 }, 
                 {
                  "height":0,
@@ -3860,8 +3860,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":6417.5,
-                 "y":1202
+                 "x":6420,
+                 "y":1207.25
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -3906,8 +3906,20 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":7386.40151515152,
-                 "y":996.916666666667
+                 "x":692.462121212126,
+                 "y":796.916666666667
+                }, 
+                {
+                 "height":0,
+                 "id":22,
+                 "name":"checkpoint",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":6727.27272727273,
+                 "y":1030.30303030303
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -4046,7 +4058,7 @@
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":22,
+ "nextobjectid":23,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

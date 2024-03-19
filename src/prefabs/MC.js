@@ -17,6 +17,8 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         this.body.setCollideWorldBounds(true)
         
         this.body.setDragX(this.DRAG)
+        this.body.setSize(45, this.height, true)
+
 
         // Create the attack hitbox sprite
         this.attackHitbox = scene.physics.add.sprite(10, 10, null)
@@ -52,17 +54,6 @@ class IdleState extends State {
 
         mc.attackHitbox.setPosition(10, 10)
 
-
-        if (mc.flipX){
-            mc.body.setSize(45, mc.height, true)
-            mc.body.setOffset(15,0)         
-        }
-        if (!mc.flipX){
-            mc.body.setSize(45, mc.height, true)
-            mc.body.setOffset(20,0)         
-        }      
-
-        //console.log('IdleState: enter')
     }
 
 

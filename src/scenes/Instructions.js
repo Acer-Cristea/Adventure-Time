@@ -22,15 +22,27 @@ class Instructions extends Phaser.Scene {
         ).setOrigin(0)
 
         this.instructionText3 = this.add.bitmapText(
-            width/2-650, height/2-150, 'Pixel', 'USE "D" FOR A MELEE ATTACK.', 24
+            width/2-650, height/2-100, 'Pixel', 'USE "D" FOR A MELEE ATTACK.', 24
         ).setOrigin(0)
 
         this.instructionText4 = this.add.bitmapText(
-            width/2-650, height/2, 'Pixel', 'USE "F" FOR A BOMB ATTACK. (YOU ONLY HAVE 1)', 24
+            width/2-650, height/2+50, 'Pixel', 'USE "F" FOR A BOMB ATTACK. (YOU ONLY HAVE 1)', 24
         ).setOrigin(0)
 
         this.instructionText5 = this.add.bitmapText(
             width/2+375, height/2+280, 'Pixel', 'PRESS UP TO CONTINUE', 24
+        ).setOrigin(0)
+
+        this.instructionText6 = this.add.bitmapText(
+            width/2+200, height/2-300, 'Pixel', 'WATCH OUT FOR BOUNCY BEE', 24
+        ).setOrigin(0)
+
+        this.instructionText7 = this.add.bitmapText(
+            width/2+200, height/2-100, 'Pixel', 'AVOID HONEY BUNNY\'S LASERS', 24
+        ).setOrigin(0)
+
+        this.instructionText7 = this.add.bitmapText(
+            width/2+200, height/2+50, 'Pixel', 'REMEMBER THE COMBO TO BEAT FROG', 24
         ).setOrigin(0)
 
         // Add your sprite and play its animations
@@ -38,13 +50,25 @@ class Instructions extends Phaser.Scene {
         //this.mc.setScale(2); // Adjust scale as needed
         this.mc1.anims.play('mc-walk') // Play the idle animation
 
-        this.mc2 = this.add.sprite(width / 2-650, height/2-70, 'mc-sheet', 0)
+        this.mc2 = this.add.sprite(width / 2-650, height/2-20, 'mc-sheet', 0)
         //this.mc.setScale(2); // Adjust scale as needed
         this.mc2.anims.play('mc-attack-instructions'); // Play the idle animation
 
-        this.mc3 = this.add.sprite(width / 2-625, height / 2+80, 'mc-sheet', 0)
+        this.mc3 = this.add.sprite(width / 2-625, height / 2+130, 'mc-sheet', 0)
         //this.mc.setScale(2); // Adjust scale as needed
         this.mc3.anims.play('mc-bomb-instructions'); // Play the idle animation
+
+        this.bee = this.add.sprite(width / 2+350, height / 2-200, 'bee', 0)
+        this.bee.anims.play('bee-walk-instructions') 
+        this.bee.setScale(0.75)
+
+
+        this.bunny = this.add.sprite(width / 2+375, height / 2-10, 'bunny', 0)
+        this.bunny.setScale(0.5)
+        this.laser = this.physics.add.sprite(this.bunny.x-150, this.bunny.y-40, "laser")
+        this.laser.body.setAllowGravity(false)
+        this.laser.setVelocityX(-400)
+        this.frog = this.add.sprite(width / 2+375, height / 2+130, 'frog', 0)
 
     }
 
@@ -52,6 +76,10 @@ class Instructions extends Phaser.Scene {
 
 
         const { KEYS } = this
+
+        if(this.laser.x < 300){
+            this.laser.x = this.bunny.x-150
+        }
 
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP)) {
             this.scene.start('scenePlay')

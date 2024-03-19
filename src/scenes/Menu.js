@@ -23,6 +23,10 @@ class Menu extends Phaser.Scene {
             this.scene.start('sceneInstructions')
         }
 
+        if(Phaser.Input.Keyboard.JustDown(KEYS.DOWN)) {
+            this.scene.start('sceneCredits')
+        }
+
     }
 }
 

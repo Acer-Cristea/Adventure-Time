@@ -16,6 +16,7 @@ class Keys extends Phaser.Scene {
             BOMB:   KeyCodes.B,
             LEFT:   KeyCodes.LEFT,
             RIGHT:  KeyCodes.RIGHT,
+            DOWN: KeyCodes.DOWN,
             PAUSE:  KeyCodes.P
         })
 

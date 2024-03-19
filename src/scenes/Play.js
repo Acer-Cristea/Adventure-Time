@@ -8,6 +8,8 @@ class Play extends Phaser.Scene {
     }
 
     create() {
+
+        
         this.music = this.sound.add("background_music", {loop: true, volume: 0.1})
         this.attack_sound = this.sound.add('attack-sfx', { volume: 0.1 })
         this.coin_sound1 = this.sound.add('coin-sfx1', { volume: 0.05 })
@@ -32,6 +34,22 @@ class Play extends Phaser.Scene {
         this.mc = new MC(this, this.mcSpawn.x, this.mcSpawn.y, "mc-sheet", 0)
         this.mc.anims.play("mc-idle")
 
+        this.checkpointSpawn = this.map.findObject("spawn", (obj) => obj.name === "checkpoint")
+        this.checkpoint = this.physics.add.sprite(this.checkpointSpawn.x, this.checkpointSpawn.y, null)
+        this.checkpoint.body.setAllowGravity(false)
+        this.checkpoint.body.setImmovable(true)
+
+
+        this.lastCheckpoint = { x: 0, y: 0 }
+
+
+
+        this.lastCheckpoint.x = this.mcSpawn.x
+        this.lastCheckpoint.y = this.mcSpawn.y
+
+        this.physics.add.overlap(this.mc, this.checkpoint, this.handleCheckpointCollision, null, this)
+
+
         // add lives by creating three assets, then saying if life one visible when the it occurs set false, else if live 2 visible set to false, else if life 3...
         //create bee
         this.beeSpawn = this.map.findObject("bee_spawn", (obj) => obj.name === "beeSpawn")
@@ -41,26 +59,26 @@ class Play extends Phaser.Scene {
 
         this.bunnySpawn = this.map.findObject("bunny_spawn", (obj) => obj.name === "bunnySpawn")
         this.bunny = this.physics.add.sprite(this.bunnySpawn.x,this.bunnySpawn.y , "bunny", 0)
-        this.bunny.setSize(250,250)
+        this.bunny.setSize(200,250)
         this.bunny.body.setImmovable(true)
 
         this.fireSpawn1 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn1")
-        this.fire = this.physics.add.sprite(this.fireSpawn1.x,this.fireSpawn1.y ,"fire")
-        this.fire.setImmovable(true)
-        this.fire.body.setCollideWorldBounds(true)
-        this.fire.anims.play("fire-idle")
+        this.fire1 = this.physics.add.sprite(this.fireSpawn1.x,this.fireSpawn1.y ,"fire")
+        this.fire1.setImmovable(true)
+        this.fire1.body.setCollideWorldBounds(true)
+        this.fire1.anims.play("fire-idle")
 
         this.fireSpawn2 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn2")
-        this.fire = this.physics.add.sprite(this.fireSpawn2.x,this.fireSpawn2.y ,"smallFire")
-        this.fire.setImmovable(true)
-        this.fire.body.setCollideWorldBounds(true)
-        this.fire.anims.play("small-fire-idle")
+        this.fire2 = this.physics.add.sprite(this.fireSpawn2.x,this.fireSpawn2.y ,"smallFire")
+        this.fire2.setImmovable(true)
+        this.fire2.body.setCollideWorldBounds(true)
+        this.fire2.anims.play("small-fire-idle")
 
         this.fireSpawn3 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn3")
-        this.fire = this.physics.add.sprite(this.fireSpawn3.x,this.fireSpawn3.y ,"smallFire")
-        this.fire.setImmovable(true)
-        this.fire.body.setCollideWorldBounds(true)
-        this.fire.anims.play("small-fire-idle")
+        this.fire3 = this.physics.add.sprite(this.fireSpawn3.x,this.fireSpawn3.y ,"smallFire")
+        this.fire3.setImmovable(true)
+        this.fire3.body.setCollideWorldBounds(true)
+        this.fire3.anims.play("small-fire-idle")
 
         this.coinSpawn1 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn1")
         this.coin1 = this.physics.add.sprite(this.coinSpawn1.x,this.coinSpawn1.y ,"coin")
@@ -106,9 +124,15 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mc, this.colLayer)
         this.physics.add.collider(this.bee, this.colLayer)
         this.physics.add.collider(this.bunny, this.colLayer)
+        this.physics.add.collider(this.mc.bombHitbox, this.colLayer, this.handleLayerBomb, null, this)
+
         this.physics.add.collider(this.mc, this.bee, this.handleCollision, null, this)
         this.physics.add.collider(this.mc, this.bunny, this.handleCollisionBunny, null, this)
-        this.physics.add.collider(this.mc, this.fire, this.handleCollisionF, null, this)
+
+        this.physics.add.collider(this.mc, this.fire1, this.handleCollisionF, null, this)
+        this.physics.add.collider(this.mc, this.fire2, this.handleCollisionF, null, this)
+        this.physics.add.collider(this.mc, this.fire3, this.handleCollisionF, null, this)
+
         this.physics.add.collider(this.mc, this.coin1, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc, this.coin2, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc, this.coin3, this.handleCollisionC, null, this)
@@ -117,9 +141,10 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mc, this.coin6, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc, this.coin7, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc, this.coin8, this.handleCollisionC, null, this)
+
         this.physics.add.collider(this.mc.attackHitbox, this.bee, this.handleAttack, null, this)
         this.physics.add.collider(this.mc.attackHitbox, this.bunny, this.handleAttackBunny, null, this)
-        this.physics.add.collider(this.mc.bombHitbox, this.colLayer, this.handleLayerBomb, null, this)
+
         this.physics.add.collider(this.mc.bombHitbox, this.bee, this.handleBombBee, null, this)
         this.physics.add.collider(this.mc.bombHitbox, this.bunny, this.handleBombBunny, null, this)
 
@@ -143,6 +168,8 @@ class Play extends Phaser.Scene {
         this.life2 = this.add.image(275, 30, "life").setOrigin(0)
         this.life3 = this.add.image(175, 30, "life").setOrigin(0)
 
+        this.bunnyLife = true
+
 
         this.bomb = this.add.image(1250, 20, "bomb").setOrigin(0)
 
@@ -151,23 +178,58 @@ class Play extends Phaser.Scene {
         
 
         this.scoreText.setScrollFactor(0)
-        this.count = 0
 
+        //WHY CAN"T YOU ROTATE A PHYSICS BODY IN PHASER EASILY. THAT MAKES NO SENSE
+
+        // Create a timer event to shoot a laser every second
+        this.previewlaserTimer = this.time.addEvent({
+            delay: 500, // 1000 milliseconds = 1 second
+            loop: true, // Repeat indefinitely
+            callback: this.updateLaserPreview,
+            callbackScope: this
+        })
+
+        this.laserPreview = this.add.graphics()
+
+
+        // Create a timer event to shoot a laser every second
+        this.laserTimer = this.time.addEvent({
+            delay: 2000, // 1000 milliseconds = 1 second
+            loop: true, // Repeat indefinitely
+            callback: this.shootLaser,
+            callbackScope: this
+        })
 
 
     }
 
     update() {
 
+        //console.log(this.lastCheckpoint.x, this.lastCheckpoint.y, this.checkpoint.x, this.checkpoint.y)
+
+
+
+        this.distanceThreshold = 900
+        this.distanceThreshold2 = 1000
+        this.distanceBunny =  Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bunny.x, this.bunny.y)
+        
+        // Update the laser preview
+        if (this.bunnyLife) {
+                this.previewlaserTimer
+
+        } else {
+            // Clear or hide the laser preview when the bunny dies
+            this.clearLaserPreview()
+        }
+
         // get local KEYS reference
         const { KEYS } = this
 
 
-        const distanceThreshold = 800
-        const distance = Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bee.x, this.bee.y)
+        const distanceBee = Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bee.x, this.bee.y)
 
         //console.log("distance: ", distance)
-            if (distance <= distanceThreshold){
+            if (distanceBee <= this.distanceThreshold){
                 //check  to see if bee.anims exists
                 if (this.bee.anims && !this.bee.anims.isPlaying) {
                     // Start playing the bee animation
@@ -205,27 +267,14 @@ class Play extends Phaser.Scene {
     }
 
     handleAttackBunny(attackHitbox, bunny){
-        this.count += 0.2
-        
+    
+        this.attack_sound.play()
+        bunny.destroy()
+        this.bunnyLife = false
 
-        console.log(this.count)
-        if (this.count > 0 && this.count == 0.2) {
-            this.attack_sound.play()
-
-        }
-        
-        if (this.count >= 2) {
-            this.attack_sound.play()
-            bunny.destroy()
-
-            
         this.score += 800
 
         this.scoreText.setText('SCORE: ' + this.score)
-
-        this.count = 0
-        }
-
     }
 
     handleCollision(mc, bee){
@@ -242,7 +291,7 @@ class Play extends Phaser.Scene {
 
 
 
-        mc.setPosition(this.mcSpawn.x, this.mcSpawn.y)    
+        mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)    
         bee.setPosition(this.beeSpawn.x, this.beeSpawn.y)
         bee.setVelocityX(0)
     }
@@ -261,7 +310,7 @@ class Play extends Phaser.Scene {
 
 
 
-        mc.setPosition(this.mcSpawn.x, this.mcSpawn.y)    
+        mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)    
         bunny.setPosition(this.bunnySpawn.x, this.bunnySpawn.y)
     }
 
@@ -277,7 +326,7 @@ class Play extends Phaser.Scene {
             this.scene.start('sceneDeath')        
         }
 
-        mc.setPosition(this.mcSpawn.x, this.mcSpawn.y)    
+        mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)    
     }
 
     handleCollisionC(mc, coin){
@@ -306,6 +355,7 @@ class Play extends Phaser.Scene {
 
     handleBombBunny(bomb, bunny){
         bunny.destroy()
+        this.bunnyLife = false
         bomb.setVisible(false)
         bomb.setVelocityY(500)
 
@@ -319,6 +369,102 @@ class Play extends Phaser.Scene {
         bombT.setVisible(false)
         this.bomb.setVisible(false)
     }
+
+    shootLaser() {
+        // Create a laser sprite at the bunny's position
+
+        if (this.bunnyLife){
+
+
+
+            if ((this.distanceBunny <= this.distanceThreshold) && (this.distanceBunny > 150)){
+
+                const angle = Phaser.Math.Angle.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y+20)
+
+                const laser = this.physics.add.sprite(this.bunny.x-80, this.bunny.y-80, 'laser')
+                laser.setSize(300,1)
+                // laser.setCircle(6)
+                // laser.body.setOffset(6)
+                laser.body.setAllowGravity(false)
+                laser.body.setImmovable(true)
+
+                // Set velocity based on angle towards the player
+                const speed = 800 // Adjust the speed as needed
+                laser.setVelocityX(speed * Math.cos(angle))
+                laser.setVelocityY(speed * Math.sin(angle))
+
+                //laser.rotation = angle
+
+
+            
+                // Check collision between the laser and the player
+                this.physics.add.collider(this.mc, laser, this.handleLaserCollision, null, this)
+            }
+        }
+        else{
+            return
+        }
+    }
+    
+
+    handleLaserCollision(mc, laser) {
+
+        mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)   
+        laser.destroy() 
+
+
+        if (this.life1.visible){
+            this.life1.setVisible(false)
+        }else if (this.life2.visible){
+            this.life2.setVisible(false)
+
+        }else if (this.life3.visible){
+            this.music.stop()
+            this.scene.start('sceneDeath')        
+        }
+
+
+    }
+
+
+    
+    updateLaserPreview() {
+        // Clear the previous preview
+        this.laserPreview.clear()
+
+        if (this.distanceBunny <= this.distanceThreshold2){
+
+        
+
+            // Draw a line from the bunny's position to the player's position
+            const angle = Phaser.Math.Angle.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y);
+            const distance = Phaser.Math.Distance.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y);
+
+            // Set the line style
+            this.laserPreview.lineStyle(3, 0x29ff01);
+
+            // Calculate the endpoint of the line
+            const endPointX = this.bunny.x + distance * Math.cos(angle);
+            const endPointY = this.bunny.y + distance * Math.sin(angle);
+
+            // Draw the line
+            this.laserPreview.lineBetween(this.bunny.x-80, this.bunny.y-80, endPointX, endPointY)
+        }
+    }
+
+    clearLaserPreview() {
+        // Clear the laser preview
+        this.laserPreview.clear()
+    }
+
+    handleCheckpointCollision(mc, checkpoint) {
+        // Update the lastCheckpoint position to the checkpoint position
+        this.lastCheckpoint.x = checkpoint.x
+        this.lastCheckpoint.y = checkpoint.y
+
+        // You can add visual/audio feedback here if needed
+    }
+        
 
 
 

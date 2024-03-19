@@ -15,6 +15,8 @@ class Load extends Phaser.Scene {
         this.load.image("bunny", "bunny.png")
         this.load.image("bomb", "bomb.png")
         this.load.image("bmo", "BMO.png")
+        this.load.image("laser", "laser.png")
+        this.load.image("frog", "frog.png")
 
 
         this.load.spritesheet('mc-sheet', 'mc-sheet.png', {
@@ -117,7 +119,14 @@ class Load extends Phaser.Scene {
             repeat: 0,
             frames: this.anims.generateFrameNumbers("bee", {frames: [0, 1]})
         })   
-        
+
+        this.anims.create({
+            key: "bee-walk-instructions",
+            frameRate: 2,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers("bee", {frames: [0, 1]})
+        })   
+
         this.anims.create({
             key: "mc-bomb",
             frameRate: 8,

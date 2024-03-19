@@ -10,6 +10,12 @@ class Death extends Phaser.Scene {
     
         this.add.image(0,0,"death").setOrigin(0)
 
+        this.instructionText2 = this.add.bitmapText(
+            width/2, height/2+300, 'PixelScore', 'PRESS UP TO GO BACK TO MENU', 24
+        ).setOrigin(0.5) 
+
+
+
 
     }
 

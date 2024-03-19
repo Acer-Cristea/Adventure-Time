@@ -1,5 +1,6 @@
 // Acer Cristea
 // Adventure Time Adaptation
+// Approximately 40-50 hours
 
 'use strict'
 
@@ -22,7 +23,7 @@ let config = {
             }
         },
     },
-    scene: [ Load, Keys, Menu, Instructions, Play, Death ]
+    scene: [ Load, Keys, Menu, Credits, Instructions, Play, Death]
 }
 
 let game = new Phaser.Game(config)
