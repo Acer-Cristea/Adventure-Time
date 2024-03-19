@@ -1,6 +1,22 @@
 class Play extends Phaser.Scene {
     constructor() {
         super('scenePlay')
+
+        this.frogDistanceThreshold = 400; // Set the distance threshold to trigger the command sequence
+        this.commandSequence = []; // Array to store the expected command sequence
+        this.expectedSequence = [            
+            Phaser.Input.Keyboard.KeyCodes.UP,
+            Phaser.Input.Keyboard.KeyCodes.DOWN,
+            Phaser.Input.Keyboard.KeyCodes.LEFT,
+            Phaser.Input.Keyboard.KeyCodes.LEFT,
+            Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            Phaser.Input.Keyboard.KeyCodes.DOWN,
+            Phaser.Input.Keyboard.KeyCodes.D,
+            Phaser.Input.Keyboard.KeyCodes.DOWN,
+            Phaser.Input.Keyboard.KeyCodes.UP
+        ] // Expected command sequence
+        this.commandIndex = 0; // Index to track the current position in the command sequence
     }
 
     preload() {
@@ -9,7 +25,8 @@ class Play extends Phaser.Scene {
 
     create() {
 
-        
+        this.KEYS = this.scene.get('sceneKeys').KEYS
+
         this.music = this.sound.add("background_music", {loop: true, volume: 0.1})
         this.attack_sound = this.sound.add('attack-sfx', { volume: 0.1 })
         this.coin_sound1 = this.sound.add('coin-sfx1', { volume: 0.05 })
@@ -17,11 +34,9 @@ class Play extends Phaser.Scene {
         this.coin_sound3 = this.sound.add('coin-sfx3', { volume: 0.05 })
 
 
-        this.music.play()
+        //this.music.play()
         //console.log('Play: create')
 
-        // grab keyboard binding from Keys scene
-        this.KEYS = this.scene.get('sceneKeys').KEYS
 
         this.map = this.add.tilemap('Map') //create tilemap
         this.tileset = this.map.addTilesetImage("Base", "tilesetImage")
@@ -38,6 +53,7 @@ class Play extends Phaser.Scene {
         this.checkpoint = this.physics.add.sprite(this.checkpointSpawn.x, this.checkpointSpawn.y, null)
         this.checkpoint.body.setAllowGravity(false)
         this.checkpoint.body.setImmovable(true)
+        this.checkpoint.setVisible(false)
 
 
         this.lastCheckpoint = { x: 0, y: 0 }
@@ -62,6 +78,11 @@ class Play extends Phaser.Scene {
         this.bunny.setSize(200,250)
         this.bunny.body.setImmovable(true)
 
+        this.frogSpawn = this.map.findObject("frog_spawn", (obj) => obj.name === "frogSpawn")
+        this.frog = this.physics.add.sprite(this.frogSpawn.x,this.frogSpawn.y , "frog", 0)
+        this.frog.setSize(300,78)
+        this.frog.body.setImmovable(true)        
+
         this.fireSpawn1 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn1")
         this.fire1 = this.physics.add.sprite(this.fireSpawn1.x,this.fireSpawn1.y ,"fire")
         this.fire1.setImmovable(true)
@@ -79,6 +100,18 @@ class Play extends Phaser.Scene {
         this.fire3.setImmovable(true)
         this.fire3.body.setCollideWorldBounds(true)
         this.fire3.anims.play("small-fire-idle")
+
+        this.fireSpawn4 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn4")
+        this.fire4 = this.physics.add.sprite(this.fireSpawn4.x,this.fireSpawn4.y ,"fire")
+        this.fire4.setImmovable(true)
+        this.fire4.body.setCollideWorldBounds(true)
+        this.fire4.anims.play("fire-idle")
+
+        this.fireSpawn5 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn5")
+        this.fire5 = this.physics.add.sprite(this.fireSpawn5.x,this.fireSpawn5.y ,"fire")
+        this.fire5.setImmovable(true)
+        this.fire5.body.setCollideWorldBounds(true)
+        this.fire5.anims.play("fire-idle")
 
         this.coinSpawn1 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn1")
         this.coin1 = this.physics.add.sprite(this.coinSpawn1.x,this.coinSpawn1.y ,"coin")
@@ -124,14 +157,24 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mc, this.colLayer)
         this.physics.add.collider(this.bee, this.colLayer)
         this.physics.add.collider(this.bunny, this.colLayer)
+        this.physics.add.collider(this.frog, this.colLayer)
         this.physics.add.collider(this.mc.bombHitbox, this.colLayer, this.handleLayerBomb, null, this)
+        this.physics.add.collider(this.fire1, this.colLayer)
+        this.physics.add.collider(this.fire2, this.colLayer)
+        this.physics.add.collider(this.fire3, this.colLayer)
+        this.physics.add.collider(this.fire4, this.colLayer)
+        this.physics.add.collider(this.fire5, this.colLayer)
+
 
         this.physics.add.collider(this.mc, this.bee, this.handleCollision, null, this)
         this.physics.add.collider(this.mc, this.bunny, this.handleCollisionBunny, null, this)
+        this.physics.add.collider(this.mc, this.frog)
 
         this.physics.add.collider(this.mc, this.fire1, this.handleCollisionF, null, this)
         this.physics.add.collider(this.mc, this.fire2, this.handleCollisionF, null, this)
         this.physics.add.collider(this.mc, this.fire3, this.handleCollisionF, null, this)
+        this.physics.add.collider(this.mc, this.fire4, this.handleCollisionF, null, this)
+        this.physics.add.collider(this.mc, this.fire5, this.handleCollisionF, null, this)
 
         this.physics.add.collider(this.mc, this.coin1, this.handleCollisionC, null, this)
         this.physics.add.collider(this.mc, this.coin2, this.handleCollisionC, null, this)
@@ -143,7 +186,7 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mc, this.coin8, this.handleCollisionC, null, this)
 
         this.physics.add.collider(this.mc.attackHitbox, this.bee, this.handleAttack, null, this)
-        this.physics.add.collider(this.mc.attackHitbox, this.bunny, this.handleAttackBunny, null, this)
+        this.physics.add.overlap(this.mc.attackHitbox, this.bunny, this.handleAttackBunny, null, this)
 
         this.physics.add.collider(this.mc.bombHitbox, this.bee, this.handleBombBee, null, this)
         this.physics.add.collider(this.mc.bombHitbox, this.bunny, this.handleBombBunny, null, this)
@@ -169,6 +212,8 @@ class Play extends Phaser.Scene {
         this.life3 = this.add.image(175, 30, "life").setOrigin(0)
 
         this.bunnyLife = true
+
+        this.frogLife = true
 
 
         this.bomb = this.add.image(1250, 20, "bomb").setOrigin(0)
@@ -200,14 +245,35 @@ class Play extends Phaser.Scene {
             callbackScope: this
         })
 
+        this.input.keyboard.on('keydown', this.handleKeyDown, this);
+
+
 
     }
 
     update() {
 
-        //console.log(this.lastCheckpoint.x, this.lastCheckpoint.y, this.checkpoint.x, this.checkpoint.y)
+        console.log(this.map.widthInPixels)
+        console.log(this.mc.x)
+        if (this.mc.x >= this.map.widthInPixels-70){
+            this.scene.start('sceneWinner')           
+        }
 
+        // get local KEYS reference
+        const { KEYS } = this
 
+            // Calculate the current height of the player
+        this.playerHeight = this.mc.y
+        //console.log(this.playerHeight)
+        // Check if the player has reached the point where you want to change the camera height
+        if (this.playerHeight < 1050) { // Replace HEIGHT_THRESHOLD with the desired height
+            // Update the camera bounds to cover the entire map vertically
+            this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels-610)
+        } else {
+            // Update the camera bounds to only cover a certain height
+
+            this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels-120)
+        }
 
         this.distanceThreshold = 900
         this.distanceThreshold2 = 1000
@@ -222,8 +288,6 @@ class Play extends Phaser.Scene {
             this.clearLaserPreview()
         }
 
-        // get local KEYS reference
-        const { KEYS } = this
 
 
         const distanceBee = Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bee.x, this.bee.y)
@@ -256,8 +320,6 @@ class Play extends Phaser.Scene {
     }
 
     handleAttack(attackHitbox, bee){
-        //console.log("Bee destroyed")
-        //this.physics.world.removeCollider(this.bee.body.collider, this.colLayer)
         this.attack_sound.play()
         bee.destroy()
 
@@ -267,6 +329,8 @@ class Play extends Phaser.Scene {
     }
 
     handleAttackBunny(attackHitbox, bunny){
+
+        //console.log("BUNNY ATTACKED")
     
         this.attack_sound.play()
         bunny.destroy()
@@ -375,14 +439,14 @@ class Play extends Phaser.Scene {
 
         if (this.bunnyLife){
 
+            //console.log(this.distanceBunny)
 
+            if ((this.distanceBunny <= this.distanceThreshold) && (this.distanceBunny > 300)){
 
-            if ((this.distanceBunny <= this.distanceThreshold) && (this.distanceBunny > 150)){
-
-                const angle = Phaser.Math.Angle.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y+20)
+                const angle = Phaser.Math.Angle.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y+80)
 
                 const laser = this.physics.add.sprite(this.bunny.x-80, this.bunny.y-80, 'laser')
-                laser.setSize(300,1)
+                laser.setSize(50,1)
                 // laser.setCircle(6)
                 // laser.body.setOffset(6)
                 laser.body.setAllowGravity(false)
@@ -432,7 +496,7 @@ class Play extends Phaser.Scene {
         // Clear the previous preview
         this.laserPreview.clear()
 
-        if (this.distanceBunny <= this.distanceThreshold2){
+        if ((this.distanceBunny <= this.distanceThreshold2) && (this.distanceBunny > 300)){
 
         
 
@@ -441,7 +505,7 @@ class Play extends Phaser.Scene {
             const distance = Phaser.Math.Distance.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y);
 
             // Set the line style
-            this.laserPreview.lineStyle(3, 0x29ff01);
+            this.laserPreview.lineStyle(3, 0xffffff);
 
             // Calculate the endpoint of the line
             const endPointX = this.bunny.x + distance * Math.cos(angle);
@@ -465,7 +529,73 @@ class Play extends Phaser.Scene {
         // You can add visual/audio feedback here if needed
     }
         
+    handleKeyDown(event) {
+        // Get the keycode of the pressed key
+        const keyCode = event.keyCode;
+    
+        // Call the method to handle the key press
+        this.handleKeyPress(keyCode);
+    }
 
 
+    handleKeyDown(key) {
+        // Check if the player is within the distance threshold to the frog
 
+        if (this.frogLife) {
+            const distanceToFrog = Phaser.Math.Distance.Between(this.mc.x, this.mc.y, this.frog.x, this.frog.y);
+                
+            if (distanceToFrog <= this.frogDistanceThreshold) {
+                // Player is within the distance threshold, proceed with handling the combo sequence
+                const nextExpectedCommand = this.expectedSequence[this.commandIndex]
+                //console.log("nextExpectedCommand", nextExpectedCommand)
+
+                //console.log("key: ", key.keyCode)
+                    
+                // Check if the pressed key matches the expected command
+                if (key.keyCode === nextExpectedCommand) {
+                    // Player pressed the expected command, move to the next command
+                    this.commandIndex++;
+
+                    // Check if the combo sequence is complete
+                    if (this.commandIndex === this.expectedSequence.length) {
+                        // Combo sequence is complete, perform the desired action
+                        //console.log('Combo sequence complete!');
+                        // Reset the command sequence
+                        this.frog.destroy()
+                        this.frogLife = false
+                        this.resetCommandSequence()
+                    }
+                } else {
+                    // Player pressed the wrong command, reset the sequence
+
+                    this.mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)   
+
+                    this.resetCommandSequence()
+
+                    if (this.life1.visible){
+                        this.life1.setVisible(false)
+                    }else if (this.life2.visible){
+                        this.life2.setVisible(false)
+            
+                    }else if (this.life3.visible){
+                        this.music.stop()
+                        this.scene.start('sceneDeath')        
+                    }
+                    
+                }
+            }
+        }
+    }
+
+    resetCommandSequence() {
+        // Reset the command sequence
+        this.commandSequence = [];
+        this.commandIndex = 0;
+    }
 }
+
+
+
+ 
+
+

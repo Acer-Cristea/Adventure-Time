@@ -9,9 +9,6 @@ class Instructions extends Phaser.Scene {
 
 
         this.KEYS = this.scene.get('sceneKeys').KEYS
-    
-        //this.add.image(0,0,"title").setOrigin(0)
-        //add bmo instructions here
 
         this.instructionText1 = this.add.bitmapText(
             width/2, height/2-350, 'Pixel', 'INSTRUCTIONS', 60
@@ -26,7 +23,7 @@ class Instructions extends Phaser.Scene {
         ).setOrigin(0)
 
         this.instructionText4 = this.add.bitmapText(
-            width/2-650, height/2+50, 'Pixel', 'USE "F" FOR A BOMB ATTACK. (YOU ONLY HAVE 1)', 24
+            width/2-650, height/2+50, 'Pixel', 'USE "B" FOR A BOMB ATTACK. (YOU ONLY HAVE 1)', 24
         ).setOrigin(0)
 
         this.instructionText5 = this.add.bitmapText(
@@ -38,15 +35,19 @@ class Instructions extends Phaser.Scene {
         ).setOrigin(0)
 
         this.instructionText7 = this.add.bitmapText(
-            width/2+200, height/2-100, 'Pixel', 'AVOID HONEY BUNNY\'S LASERS', 24
+            width/2+185, height/2-100, 'Pixel', 'AVOID HONEY BUNNY\'S LASERS', 24
         ).setOrigin(0)
 
         this.instructionText7 = this.add.bitmapText(
-            width/2+200, height/2+50, 'Pixel', 'REMEMBER THE COMBO TO BEAT FROG', 24
+            width/2+125, height/2+50, 'Pixel', 'FIND THE COMBO TO BEAT SLEEPY SAM', 24
+        ).setOrigin(0)
+
+        this.instructionText8 = this.add.bitmapText(
+            width/2+50, height/2+200, 'Pixel', 'WALK AS FAR AS YOU CAN BEFORE YOU START YOUR COMBO', 24
         ).setOrigin(0)
 
         // Add your sprite and play its animations
-        this.mc1 = this.add.sprite(width/2-650, height/2-220, 'mc-sheet', 0)
+        this.mc1 = this.add.sprite(width/2-650, height/2-200, 'mc-sheet', 0)
         //this.mc.setScale(2); // Adjust scale as needed
         this.mc1.anims.play('mc-walk') // Play the idle animation
 
@@ -54,7 +55,7 @@ class Instructions extends Phaser.Scene {
         //this.mc.setScale(2); // Adjust scale as needed
         this.mc2.anims.play('mc-attack-instructions'); // Play the idle animation
 
-        this.mc3 = this.add.sprite(width / 2-625, height / 2+130, 'mc-sheet', 0)
+        this.mc3 = this.add.sprite(width / 2-625, height / 2+140, 'mc-sheet', 0)
         //this.mc.setScale(2); // Adjust scale as needed
         this.mc3.anims.play('mc-bomb-instructions'); // Play the idle animation
 
@@ -93,7 +94,4 @@ class Instructions extends Phaser.Scene {
 
     }
 }
-//scene.object.setScrollFactor(0)
 
-//any object that's in a scene, will not scroll with the screen, like a UI
-//can use numbers as well to create parrallex

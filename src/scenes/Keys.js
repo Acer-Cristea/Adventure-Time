@@ -17,7 +17,7 @@ class Keys extends Phaser.Scene {
             LEFT:   KeyCodes.LEFT,
             RIGHT:  KeyCodes.RIGHT,
             DOWN: KeyCodes.DOWN,
-            PAUSE:  KeyCodes.P
+            SPACE: KeyCodes.SPACE
         })
 
         // launch next scene so it will run concurrently with this one
