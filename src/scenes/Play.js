@@ -1,9 +1,29 @@
 class Play extends Phaser.Scene {
     constructor() {
-        super('scenePlay')
+        super("scenePlay")
+    }
 
-        this.frogDistanceThreshold = 400; // Set the distance threshold to trigger the command sequence
-        this.commandSequence = []; // Array to store the expected command sequence
+    preload() {
+
+    }
+
+    create() {
+
+        this.KEYS = this.scene.get("sceneKeys").KEYS
+
+        this.music = this.sound.add("background_music", {loop: true, volume: 0.1})
+        this.attack_sound = this.sound.add("attack-sfx", { volume: 0.1 })
+        this.coin_sound1 = this.sound.add("coin-sfx1", { volume: 0.05 })
+        this.coin_sound2 = this.sound.add("coin-sfx2", { volume: 0.05 })
+        this.point_sound = this.sound.add("point", { volume: 0.15})
+        this.hit_sound = this.sound.add("hit", { volume: 0.4})
+
+
+
+        this.music.play()
+
+        this.frogDistanceThreshold = 400 
+        this.commandSequence = [] 
         this.expectedSequence = [            
             Phaser.Input.Keyboard.KeyCodes.UP,
             Phaser.Input.Keyboard.KeyCodes.DOWN,
@@ -15,36 +35,15 @@ class Play extends Phaser.Scene {
             Phaser.Input.Keyboard.KeyCodes.D,
             Phaser.Input.Keyboard.KeyCodes.DOWN,
             Phaser.Input.Keyboard.KeyCodes.UP
-        ] // Expected command sequence
-        this.commandIndex = 0; // Index to track the current position in the command sequence
-    }
-
-    preload() {
-
-    }
-
-    create() {
-
-        this.KEYS = this.scene.get('sceneKeys').KEYS
-
-        this.music = this.sound.add("background_music", {loop: true, volume: 0.1})
-        this.attack_sound = this.sound.add('attack-sfx', { volume: 0.1 })
-        this.coin_sound1 = this.sound.add('coin-sfx1', { volume: 0.05 })
-        this.coin_sound2 = this.sound.add('coin-sfx2', { volume: 0.05 })
-        this.coin_sound3 = this.sound.add('coin-sfx3', { volume: 0.05 })
-
-
-        //this.music.play()
-        //console.log('Play: create')
-
-
-        this.map = this.add.tilemap('Map') //create tilemap
+        ] 
+        this.commandIndex = 0 
+ 
+        this.map = this.add.tilemap("Map")
         this.tileset = this.map.addTilesetImage("Base", "tilesetImage")
         this.bkgLayer = this.map.createLayer("bkg", this.tileset, 0 ,0)
         this.colLayer = this.map.createLayer("col", this.tileset,0,0)
         this.colLayer.setCollisionByProperty({collides: true})
         
-        // create mc        
         this.mcSpawn = this.map.findObject("spawn", (obj) => obj.name === "mcSpawn")
         this.mc = new MC(this, this.mcSpawn.x, this.mcSpawn.y, "mc-sheet", 0)
         this.mc.anims.play("mc-idle")
@@ -55,19 +54,13 @@ class Play extends Phaser.Scene {
         this.checkpoint.body.setImmovable(true)
         this.checkpoint.setVisible(false)
 
-
         this.lastCheckpoint = { x: 0, y: 0 }
-
-
 
         this.lastCheckpoint.x = this.mcSpawn.x
         this.lastCheckpoint.y = this.mcSpawn.y
 
         this.physics.add.overlap(this.mc, this.checkpoint, this.handleCheckpointCollision, null, this)
 
-
-        // add lives by creating three assets, then saying if life one visible when the it occurs set false, else if live 2 visible set to false, else if life 3...
-        //create bee
         this.beeSpawn = this.map.findObject("bee_spawn", (obj) => obj.name === "beeSpawn")
         this.bee = this.physics.add.sprite(this.beeSpawn.x,this.beeSpawn.y , "bee", 0)
         this.bee.setSize(200,200)
@@ -153,7 +146,6 @@ class Play extends Phaser.Scene {
         this.coin8.setImmovable(true)
         this.coin8.body.setAllowGravity(false)  
 
-
         this.physics.add.collider(this.mc, this.colLayer)
         this.physics.add.collider(this.bee, this.colLayer)
         this.physics.add.collider(this.bunny, this.colLayer)
@@ -164,7 +156,6 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.fire3, this.colLayer)
         this.physics.add.collider(this.fire4, this.colLayer)
         this.physics.add.collider(this.fire5, this.colLayer)
-
 
         this.physics.add.collider(this.mc, this.bee, this.handleCollision, null, this)
         this.physics.add.collider(this.mc, this.bunny, this.handleCollisionBunny, null, this)
@@ -191,17 +182,13 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mc.bombHitbox, this.bee, this.handleBombBee, null, this)
         this.physics.add.collider(this.mc.bombHitbox, this.bunny, this.handleBombBunny, null, this)
 
-
         this.uiCamera = this.cameras.add(0, 0, 1600, 100)
-        this.uiCamera.setScroll(0, 0) // Position the UI camera at the top-left corner of the game window
+        this.uiCamera.setScroll(0, 0) 
         
         this.uiCamera.ignore(this.bkgLayer)
-        this.uiCamera.ignore(this.colLayer) // Ignore collision layer so UI elements are not obscured
-        this.add.image(0, 0, "TB").setOrigin(0).setScrollFactor(0) // Render TP image at the top-left corner of the UI camera viewport
+        this.uiCamera.ignore(this.colLayer) 
+        this.add.image(0, 0, "TB").setOrigin(0).setScrollFactor(0) 
 
-        //camera stuff
-        //console.log("mapwidth in pixels: ",this.map.widthInPixels)
-        //console.log("mapheight in pixels: ",this.map.heightInPixels)  
         this.cameras.main.setBounds(0,0, this.map.widthInPixels, this.map.heightInPixels)
         this.cameras.main.startFollow(this.mc, true)
         this.physics.world.setBounds(0,0, this.map.widthInPixels, this.map.heightInPixels)
@@ -210,211 +197,180 @@ class Play extends Phaser.Scene {
         this.life1 = this.add.image(375, 30, "life").setOrigin(0)
         this.life2 = this.add.image(275, 30, "life").setOrigin(0)
         this.life3 = this.add.image(175, 30, "life").setOrigin(0)
+        this.bomb = this.add.image(1250, 20, "bomb").setOrigin(0)
+        this.scoreText = this.add.bitmapText(650, 15, "PixelScore", ("SCORE: " + this.score), 60)
+        this.scoreText.setScrollFactor(0)
 
         this.bunnyLife = true
-
         this.frogLife = true
-
-
-        this.bomb = this.add.image(1250, 20, "bomb").setOrigin(0)
-
-
-        this.scoreText = this.add.bitmapText(650, 15, "PixelScore", ('SCORE: ' + this.score), 60)
-        
-
-        this.scoreText.setScrollFactor(0)
 
         //WHY CAN"T YOU ROTATE A PHYSICS BODY IN PHASER EASILY. THAT MAKES NO SENSE
 
-        // Create a timer event to shoot a laser every second
+        this.laserPreview = this.add.graphics()
+
         this.previewlaserTimer = this.time.addEvent({
-            delay: 500, // 1000 milliseconds = 1 second
-            loop: true, // Repeat indefinitely
+            delay: 500,
+            loop: true, 
             callback: this.updateLaserPreview,
             callbackScope: this
         })
 
-        this.laserPreview = this.add.graphics()
-
-
-        // Create a timer event to shoot a laser every second
         this.laserTimer = this.time.addEvent({
-            delay: 2000, // 1000 milliseconds = 1 second
-            loop: true, // Repeat indefinitely
+            delay: 2000, 
+            loop: true, 
             callback: this.shootLaser,
             callbackScope: this
         })
 
-        this.input.keyboard.on('keydown', this.handleKeyDown, this);
-
-
+        this.input.keyboard.on("keydown", this.handleKeyDown, this)
 
     }
 
     update() {
 
-        console.log(this.map.widthInPixels)
-        console.log(this.mc.x)
         if (this.mc.x >= this.map.widthInPixels-70){
-            this.scene.start('sceneWinner')           
+            this.music.stop()
+            this.scene.start("sceneWinner")           
         }
 
         // get local KEYS reference
         const { KEYS } = this
 
-            // Calculate the current height of the player
         this.playerHeight = this.mc.y
-        //console.log(this.playerHeight)
-        // Check if the player has reached the point where you want to change the camera height
-        if (this.playerHeight < 1050) { // Replace HEIGHT_THRESHOLD with the desired height
-            // Update the camera bounds to cover the entire map vertically
+        if (this.playerHeight < 1250) {
             this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels-610)
         } else {
-            // Update the camera bounds to only cover a certain height
-
             this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels-120)
         }
 
         this.distanceThreshold = 900
         this.distanceThreshold2 = 1000
         this.distanceBunny =  Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bunny.x, this.bunny.y)
+        const distanceBee = Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bee.x, this.bee.y)
+
         
-        // Update the laser preview
         if (this.bunnyLife) {
                 this.previewlaserTimer
-
         } else {
-            // Clear or hide the laser preview when the bunny dies
             this.clearLaserPreview()
         }
 
+        if (distanceBee <= this.distanceThreshold){
+            if (this.bee.anims && !this.bee.anims.isPlaying) {
+                this.bee.anims.play("bee-walk")
 
-
-        const distanceBee = Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bee.x, this.bee.y)
-
-        //console.log("distance: ", distance)
-            if (distanceBee <= this.distanceThreshold){
-                //check  to see if bee.anims exists
-                if (this.bee.anims && !this.bee.anims.isPlaying) {
-                    // Start playing the bee animation
-                    this.bee.anims.play("bee-walk")
-
-                    if (this.mc.x <= this.bee.x) {
-                        this.bee.resetFlip()
-                        this.bee.setVelocityX(-50)
-                    }
-                    else if (this.mc.x > this.bee.x) {
-
-                        //this.bee.anims.play("bee-walk")
-                        this.bee.setFlip(true)
-                        this.bee.setVelocityX(50)
-                    }
+                if (this.mc.x <= this.bee.x) {
+                    this.bee.resetFlip()
+                    this.bee.setVelocityX(-50)
+                }
+                else if (this.mc.x > this.bee.x) {
+                    this.bee.setFlip(true)
+                    this.bee.setVelocityX(50)
                 }
             }
-        
-
+        }
         this.mcFSM.step()
-
-
-
     }
 
     handleAttack(attackHitbox, bee){
         this.attack_sound.play()
         bee.destroy()
-
         this.score += 500
-
-        this.scoreText.setText('SCORE: ' + this.score)
+        this.scoreText.setText("SCORE: " + this.score)
+        this.point_sound.play()
+        const points = this.add.sprite(bee.x, bee.y, "points", 0)
+        points.anims.play("points")
+        points.once("animationcomplete", () => {
+            points.destroy() 
+        })
     }
 
-    handleAttackBunny(attackHitbox, bunny){
-
-        //console.log("BUNNY ATTACKED")
-    
+    handleAttackBunny(attackHitbox, bunny){    
         this.attack_sound.play()
         bunny.destroy()
         this.bunnyLife = false
-
         this.score += 800
-
-        this.scoreText.setText('SCORE: ' + this.score)
+        this.scoreText.setText("SCORE: " + this.score)
+        this.point_sound.play()
+        const points = this.add.sprite(bunny.x, bunny.y, "points800", 0)
+        points.anims.play("points800")
+        points.once("animationcomplete", () => {
+            points.destroy() 
+        })
     }
 
     handleCollision(mc, bee){
-
         if (this.life1.visible){
             this.life1.setVisible(false)
+            this.hit_sound.play()
         }else if (this.life2.visible){
             this.life2.setVisible(false)
-
+            this.hit_sound.play()
         }else if (this.life3.visible){
             this.music.stop()
-            this.scene.start('sceneDeath')        
+            this.scene.start("sceneDeath")        
         }
-
-
-
         mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)    
         bee.setPosition(this.beeSpawn.x, this.beeSpawn.y)
         bee.setVelocityX(0)
     }
 
     handleCollisionBunny(mc, bunny){
-
         if (this.life1.visible){
             this.life1.setVisible(false)
+            this.hit_sound.play()
         }else if (this.life2.visible){
             this.life2.setVisible(false)
-
+            this.hit_sound.play()
         }else if (this.life3.visible){
             this.music.stop()
-            this.scene.start('sceneDeath')        
+            this.scene.start("sceneDeath")        
         }
-
-
-
         mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)    
         bunny.setPosition(this.bunnySpawn.x, this.bunnySpawn.y)
     }
 
     handleCollisionF(mc, fire){
-
         if (this.life1.visible){
             this.life1.setVisible(false)
+            this.hit_sound.play()
         }else if (this.life2.visible){
             this.life2.setVisible(false)
-
+            this.hit_sound.play()
         }else if (this.life3.visible){
             this.music.stop()
-            this.scene.start('sceneDeath')        
+            this.scene.start("sceneDeath")        
         }
-
         mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)    
     }
 
     handleCollisionC(mc, coin){
         this.coin_sound1.play()
         this.coin_sound2.play()
-        //this.coin_sound3.play()
-        
-
-
         coin.destroy()
         this.score += 31.25
+        this.scoreText.setText("SCORE: " + this.score)
 
-        this.scoreText.setText('SCORE: ' + this.score)
+        const coinShine = this.add.sprite(coin.x, coin.y, "coin-shine", 0)
+        coinShine.anims.play("coin")
+        coinShine.once("animationcomplete", () => {
+            coinShine.destroy() 
+        })
     }
 
     handleBombBee(bomb, bee){
         bee.destroy()
         bomb.setVisible(false)
         bomb.setVelocityY(500)
-
-
         this.score += 500
+        this.scoreText.setText("SCORE: " + this.score)
+        this.point_sound.play()
+        const points = this.add.sprite(bee.x, bee.y, "points", 0)
+        points.anims.play("points")
+        points.once("animationcomplete", () => {
+            points.destroy() 
+        })
 
-        this.scoreText.setText('SCORE: ' + this.score)
     }
 
     handleBombBunny(bomb, bunny){
@@ -422,11 +378,14 @@ class Play extends Phaser.Scene {
         this.bunnyLife = false
         bomb.setVisible(false)
         bomb.setVelocityY(500)
-
-
         this.score += 800
-
-        this.scoreText.setText('SCORE: ' + this.score)
+        this.scoreText.setText("SCORE: " + this.score)
+        this.point_sound.play()
+        const points = this.add.sprite(bunny.x, bunny.y, "points800", 0)
+        points.anims.play("points800")
+        points.once("animationcomplete", () => {
+            points.destroy() 
+        })
     }
 
     handleLayerBomb(bombT, colLayer){
@@ -435,33 +394,20 @@ class Play extends Phaser.Scene {
     }
 
     shootLaser() {
-        // Create a laser sprite at the bunny's position
-
         if (this.bunnyLife){
-
-            //console.log(this.distanceBunny)
-
             if ((this.distanceBunny <= this.distanceThreshold) && (this.distanceBunny > 300)){
 
                 const angle = Phaser.Math.Angle.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y+80)
+                const laser = this.physics.add.sprite(this.bunny.x-80, this.bunny.y-80, "laser")
 
-                const laser = this.physics.add.sprite(this.bunny.x-80, this.bunny.y-80, 'laser')
                 laser.setSize(50,1)
-                // laser.setCircle(6)
-                // laser.body.setOffset(6)
                 laser.body.setAllowGravity(false)
                 laser.body.setImmovable(true)
-
-                // Set velocity based on angle towards the player
                 const speed = 800 // Adjust the speed as needed
                 laser.setVelocityX(speed * Math.cos(angle))
                 laser.setVelocityY(speed * Math.sin(angle))
+                //laser.rotation = angle            
 
-                //laser.rotation = angle
-
-
-            
-                // Check collision between the laser and the player
                 this.physics.add.collider(this.mc, laser, this.handleLaserCollision, null, this)
             }
         }
@@ -472,101 +418,72 @@ class Play extends Phaser.Scene {
     
 
     handleLaserCollision(mc, laser) {
-
         mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)   
         laser.destroy() 
-
-
         if (this.life1.visible){
             this.life1.setVisible(false)
+            this.hit_sound.play()
         }else if (this.life2.visible){
             this.life2.setVisible(false)
 
-        }else if (this.life3.visible){
+        
+        this.hit_sound.play()}else if (this.life3.visible){
             this.music.stop()
-            this.scene.start('sceneDeath')        
+            this.scene.start("sceneDeath")        
         }
-
-
     }
 
 
     
     updateLaserPreview() {
-        // Clear the previous preview
         this.laserPreview.clear()
-
         if ((this.distanceBunny <= this.distanceThreshold2) && (this.distanceBunny > 300)){
+            const angle = Phaser.Math.Angle.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y)
+            const distance = Phaser.Math.Distance.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y)
 
-        
+            this.laserPreview.lineStyle(3, 0xffffff)
 
-            // Draw a line from the bunny's position to the player's position
-            const angle = Phaser.Math.Angle.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y);
-            const distance = Phaser.Math.Distance.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y);
+            const endPointX = this.bunny.x + distance * Math.cos(angle)
+            const endPointY = this.bunny.y + distance * Math.sin(angle)
 
-            // Set the line style
-            this.laserPreview.lineStyle(3, 0xffffff);
-
-            // Calculate the endpoint of the line
-            const endPointX = this.bunny.x + distance * Math.cos(angle);
-            const endPointY = this.bunny.y + distance * Math.sin(angle);
-
-            // Draw the line
             this.laserPreview.lineBetween(this.bunny.x-80, this.bunny.y-80, endPointX, endPointY)
         }
     }
 
     clearLaserPreview() {
-        // Clear the laser preview
         this.laserPreview.clear()
     }
 
     handleCheckpointCollision(mc, checkpoint) {
-        // Update the lastCheckpoint position to the checkpoint position
         this.lastCheckpoint.x = checkpoint.x
         this.lastCheckpoint.y = checkpoint.y
-
-        // You can add visual/audio feedback here if needed
     }
         
     handleKeyDown(event) {
-        // Get the keycode of the pressed key
-        const keyCode = event.keyCode;
-    
-        // Call the method to handle the key press
-        this.handleKeyPress(keyCode);
+        const keyCode = event.keyCode
+        this.handleKeyPress(keyCode)
     }
 
 
     handleKeyDown(key) {
-        // Check if the player is within the distance threshold to the frog
-
         if (this.frogLife) {
-            const distanceToFrog = Phaser.Math.Distance.Between(this.mc.x, this.mc.y, this.frog.x, this.frog.y);
+
+            const distanceToFrog = Phaser.Math.Distance.Between(this.mc.x, this.mc.y, this.frog.x, this.frog.y)
                 
             if (distanceToFrog <= this.frogDistanceThreshold) {
-                // Player is within the distance threshold, proceed with handling the combo sequence
+
                 const nextExpectedCommand = this.expectedSequence[this.commandIndex]
-                //console.log("nextExpectedCommand", nextExpectedCommand)
 
-                //console.log("key: ", key.keyCode)
-                    
-                // Check if the pressed key matches the expected command
                 if (key.keyCode === nextExpectedCommand) {
-                    // Player pressed the expected command, move to the next command
-                    this.commandIndex++;
 
-                    // Check if the combo sequence is complete
+                    this.commandIndex++
+
                     if (this.commandIndex === this.expectedSequence.length) {
-                        // Combo sequence is complete, perform the desired action
-                        //console.log('Combo sequence complete!');
-                        // Reset the command sequence
                         this.frog.destroy()
                         this.frogLife = false
                         this.resetCommandSequence()
                     }
                 } else {
-                    // Player pressed the wrong command, reset the sequence
 
                     this.mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)   
 
@@ -574,12 +491,14 @@ class Play extends Phaser.Scene {
 
                     if (this.life1.visible){
                         this.life1.setVisible(false)
+                        this.hit_sound.play()
                     }else if (this.life2.visible){
                         this.life2.setVisible(false)
             
-                    }else if (this.life3.visible){
+        
+        this.hit_sound.play()            }else if (this.life3.visible){
                         this.music.stop()
-                        this.scene.start('sceneDeath')        
+                        this.scene.start("sceneDeath")        
                     }
                     
                 }
@@ -588,9 +507,8 @@ class Play extends Phaser.Scene {
     }
 
     resetCommandSequence() {
-        // Reset the command sequence
-        this.commandSequence = [];
-        this.commandIndex = 0;
+        this.commandSequence = []
+        this.commandIndex = 0
     }
 }
 

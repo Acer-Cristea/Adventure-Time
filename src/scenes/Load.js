@@ -43,10 +43,30 @@ class Load extends Phaser.Scene {
             frameHeight: 103
         })
 
-
         this.load.spritesheet('smallFire', 'smallFire.png', {
             frameWidth: 120,
             frameHeight: 103
+        })
+
+        this.load.spritesheet('coin-shine', 'coin_shine.png', {
+            frameWidth: 32,
+            frameHeight: 50
+        })
+
+        
+        this.load.spritesheet('points', 'points.png', {
+            frameWidth: 177,
+            frameHeight: 192
+        })
+
+        this.load.spritesheet('points800', 'points800.png', {
+            frameWidth: 177,
+            frameHeight: 192
+        })
+
+        this.load.spritesheet('mc-sheet', 'mc-sheet.png', {
+            frameWidth: 115,
+            frameHeight: 116
         })
 
         this.load.path = './assets/tilemaps/'
@@ -65,6 +85,13 @@ class Load extends Phaser.Scene {
         this.load.audio("coin-sfx1", "coin_pickup1.wav")
         this.load.audio("coin-sfx2", "coin_pickup2.wav")
         this.load.audio("coin-sfx3", "coin_pickup3.wav")
+        this.load.audio("point", "points.wav")
+        this.load.audio("death", "death.wav")
+        this.load.audio("hit", "hit.wav")
+        this.load.audio("select", "select.wav")
+
+
+
 
         this.load.path = './assets/fonts/'
         this.load.bitmapFont('Pixel', 'Pixel.png', 'Pixel.xml')
@@ -153,6 +180,27 @@ class Load extends Phaser.Scene {
             frameRate: 2,
             repeat: -1,
             frames: this.anims.generateFrameNumbers('smallFire', { frames: [ 0, 1 ]} )
+        })
+
+        this.anims.create({
+            key: 'coin',
+            frameRate: 6,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers('coin-shine', { frames: [ 0, 1]} )
+        })
+
+        this.anims.create({
+            key: 'points',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers('points', { frames: [ 0, 1, 0, 1, 0, 1, 0, 1]} )
+        })
+
+        this.anims.create({
+            key: 'points800',
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers('points800', { frames: [ 0, 1, 0, 1, 0, 1, 0, 1]} )
         })
 
         this.scene.start('sceneKeys')

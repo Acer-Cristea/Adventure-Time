@@ -6,7 +6,7 @@ class Instructions extends Phaser.Scene {
     create() {
 
         this.add.image(0,0,"bmo").setOrigin(0)
-
+        this.select_sound = this.sound.add("select", {volume: 0.5})
 
         this.KEYS = this.scene.get('sceneKeys').KEYS
 
@@ -83,6 +83,7 @@ class Instructions extends Phaser.Scene {
         }
 
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP)) {
+            this.select_sound.play()
             this.scene.start('scenePlay')
         }
 

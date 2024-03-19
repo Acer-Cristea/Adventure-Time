@@ -5,6 +5,7 @@ class Death extends Phaser.Scene {
 
     create() {
 
+        this.select_sound = this.sound.add("select", {volume: 0.5})
 
         this.KEYS = this.scene.get('sceneKeys').KEYS
     
@@ -14,7 +15,8 @@ class Death extends Phaser.Scene {
             width/2, height/2+300, 'PixelScore', 'PRESS UP TO GO BACK TO MENU', 24
         ).setOrigin(0.5) 
 
-
+        this.death_sound = this.sound.add("death",  { volume: 0.5})
+        this.death_sound.play()
 
 
     }
@@ -25,6 +27,7 @@ class Death extends Phaser.Scene {
         const { KEYS } = this
 
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP)) {
+            this.select_sound.play()
             this.scene.start('sceneMenu')
         }
 

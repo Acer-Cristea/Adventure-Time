@@ -5,6 +5,9 @@ class Winner extends Phaser.Scene {
 
     create() {
 
+        this.select_sound = this.sound.add("select", {volume: 0.5})
+
+
         this.KEYS = this.scene.get('sceneKeys').KEYS
 
 
@@ -25,6 +28,7 @@ class Winner extends Phaser.Scene {
         const { KEYS } = this
 
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP)) {
+            this.select_sound.play()
             this.scene.start('sceneMenu')
         }
 
