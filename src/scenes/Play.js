@@ -17,6 +17,8 @@ class Play extends Phaser.Scene {
         this.coin_sound2 = this.sound.add("coin-sfx2", { volume: 0.05 })
         this.point_sound = this.sound.add("point", { volume: 0.15})
         this.hit_sound = this.sound.add("hit", { volume: 0.4})
+        this.explosion_sound = this.sound.add("explosion", { volume: 0.4})
+        this.laser_sound = this.sound.add("laser", { volume: 0.4})
 
 
 
@@ -389,6 +391,8 @@ class Play extends Phaser.Scene {
     }
 
     handleLayerBomb(bombT, colLayer){
+        this.explosion_sound.play()
+
         bombT.setVisible(false)
         this.bomb.setVisible(false)
     }
@@ -396,7 +400,7 @@ class Play extends Phaser.Scene {
     shootLaser() {
         if (this.bunnyLife){
             if ((this.distanceBunny <= this.distanceThreshold) && (this.distanceBunny > 300)){
-
+                this.laser_sound.play()
                 const angle = Phaser.Math.Angle.Between(this.bunny.x, this.bunny.y, this.mc.x, this.mc.y+80)
                 const laser = this.physics.add.sprite(this.bunny.x-80, this.bunny.y-80, "laser")
 
@@ -494,9 +498,8 @@ class Play extends Phaser.Scene {
                         this.hit_sound.play()
                     }else if (this.life2.visible){
                         this.life2.setVisible(false)
-            
-        
-        this.hit_sound.play()            }else if (this.life3.visible){
+                        this.hit_sound.play()            
+                    }else if (this.life3.visible){
                         this.music.stop()
                         this.scene.start("sceneDeath")        
                     }
