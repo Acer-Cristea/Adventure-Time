@@ -379,10 +379,11 @@ class Play extends Phaser.Scene {
         bunny.destroy()
         this.bunnyLife = false
         bomb.setVisible(false)
-        bomb.setVelocityY(500)
         this.score += 800
         this.scoreText.setText("SCORE: " + this.score)
         this.point_sound.play()
+        this.bomb.destroy()
+        this.explosion_sound.play()
         const points = this.add.sprite(bunny.x, bunny.y, "points800", 0)
         points.anims.play("points800")
         points.once("animationcomplete", () => {
@@ -392,9 +393,9 @@ class Play extends Phaser.Scene {
 
     handleLayerBomb(bombT, colLayer){
         this.explosion_sound.play()
-
         bombT.setVisible(false)
         this.bomb.setVisible(false)
+        this.bomb.destroy()
     }
 
     shootLaser() {
@@ -486,6 +487,10 @@ class Play extends Phaser.Scene {
                         this.frog.destroy()
                         this.frogLife = false
                         this.resetCommandSequence()
+                        this.score += 1000
+                        this.scoreText.setText("SCORE: " + this.score)
+                        this.point_sound.play()
+
                     }
                 } else {
 
