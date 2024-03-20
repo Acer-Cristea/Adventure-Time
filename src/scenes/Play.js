@@ -13,6 +13,7 @@ class Play extends Phaser.Scene {
 
         //sound
         this.music = this.sound.add("background_music", {loop: true, volume: 0.1})
+        this.heartbeat = this.sound.add("heartbeat", {loop: true, volume: 1})
         this.attack_sound = this.sound.add("attack-sfx", { volume: 0.1 })
         this.coin_sound1 = this.sound.add("coin-sfx1", { volume: 0.05 })
         this.coin_sound2 = this.sound.add("coin-sfx2", { volume: 0.05 })
@@ -88,8 +89,9 @@ class Play extends Phaser.Scene {
 
         //frog
         this.frogSpawn = this.map.findObject("frog_spawn", (obj) => obj.name === "frogSpawn")
-        this.frog = this.physics.add.sprite(this.frogSpawn.x,this.frogSpawn.y , "frog", 0)
-        this.frog.setSize(300,78)
+        this.frog = this.physics.add.sprite(this.frogSpawn.x,this.frogSpawn.y , "frog-sheet", 0)
+        this.frog.setSize(193,78)
+        this.frog.body.setOffset(30,0)
         this.frog.body.setImmovable(true)        
 
         //fire
@@ -287,6 +289,16 @@ class Play extends Phaser.Scene {
         this.distanceThreshold2 = 1000
         this.distanceBunny =  Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bunny.x, this.bunny.y)
         const distanceBee = Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bee.x, this.bee.y)
+        this.distanceToFrog = Phaser.Math.Distance.Between(this.mc.x, this.mc.y, this.frog.x, this.frog.y)
+
+        if (this.distanceToFrog <= this.frogDistanceThreshold) {
+            if(this.frogLife){
+                if (!this.heartbeat.isPlaying) {
+                    this.heartbeat.play()
+                }
+                this.music.stop()
+            }
+        }
 
         //preview laser only shows if bunny is alive
         if (this.bunnyLife) {
@@ -537,10 +549,8 @@ class Play extends Phaser.Scene {
     //When you are in distance, keeps track of index of combo ensuring you enter the right order. If you don't you die
     handleKeyDown(key) {
         if (this.frogLife) {
-
-            const distanceToFrog = Phaser.Math.Distance.Between(this.mc.x, this.mc.y, this.frog.x, this.frog.y)
                 
-            if (distanceToFrog <= this.frogDistanceThreshold) {
+            if (this.distanceToFrog <= this.frogDistanceThreshold) {
 
                 const nextExpectedCommand = this.expectedSequence[this.commandIndex]
 
@@ -555,6 +565,7 @@ class Play extends Phaser.Scene {
                         this.score += 1000
                         this.scoreText.setText("SCORE: " + this.score)
                         this.point_sound.play()
+                        this.heartbeat.stop()
 
                         const points = this.add.sprite(this.frog.x, this.frog.y-60, "points1000", 0)
                         points.anims.play("points1000")
@@ -565,21 +576,29 @@ class Play extends Phaser.Scene {
                     }
                 } else {
 
-                    this.mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)   
+                    this.frog.anims.play("frog-attack")
+                    this.frog.once("animationcomplete", () => {
 
-                    this.resetCommandSequence()
+                        this.frog.anims.play("frog-idle")
+                        this.mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)   
+                        this.resetCommandSequence()
+    
+                        this.music.play()
+                        this.heartbeat.stop()
+    
+                        if (this.life1.visible){
+                            this.life1.setVisible(false)
+                            this.hit_sound.play()
+                        }else if (this.life2.visible){
+                            this.life2.setVisible(false)
+                            this.hit_sound.play()            
+                        }else if (this.life3.visible){
+                            this.music.stop()
+                            this.scene.start("sceneDeath")        
+                        }
 
-                    if (this.life1.visible){
-                        this.life1.setVisible(false)
-                        this.hit_sound.play()
-                    }else if (this.life2.visible){
-                        this.life2.setVisible(false)
-                        this.hit_sound.play()            
-                    }else if (this.life3.visible){
-                        this.music.stop()
-                        this.scene.start("sceneDeath")        
-                    }
-                    
+                    })
+  
                 }
             }
         }

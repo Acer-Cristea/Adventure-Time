@@ -43,7 +43,7 @@ class Instructions extends Phaser.Scene {
         ).setOrigin(0)
 
         this.instructionText8 = this.add.bitmapText(
-            width/2+50, height/2+200, "Pixel", "WALK AS FAR AS YOU CAN BEFORE YOU START YOUR COMBO", 24
+            width/2-425, height/2+200, "Pixel", "WALK AS FAR AS YOU CAN WITHOUT STOPING BEFORE YOU START YOUR COMBO", 24
         ).setOrigin(0)
 
         this.mc1 = this.add.sprite(width/2-650, height/2-200, "mc-sheet", 0)
@@ -65,7 +65,7 @@ class Instructions extends Phaser.Scene {
         this.laser = this.physics.add.sprite(this.bunny.x-150, this.bunny.y-40, "laser")
         this.laser.body.setAllowGravity(false)
         this.laser.setVelocityX(-400)
-        this.frog = this.add.sprite(width / 2+375, height / 2+130, "frog", 0)
+        this.frog = this.add.sprite(width / 2+375, height / 2+130, "frog-sheet", 0)
 
     }
 

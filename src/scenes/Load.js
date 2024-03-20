@@ -16,7 +16,6 @@ class Load extends Phaser.Scene {
         this.load.image("bomb", "bomb.png")
         this.load.image("bmo", "BMO.png")
         this.load.image("laser", "laser.png")
-        this.load.image("frog", "frog.png")
 
 
         this.load.spritesheet("mc-sheet", "mc-sheet.png", {
@@ -74,6 +73,12 @@ class Load extends Phaser.Scene {
             frameHeight: 360
         })
 
+        
+        this.load.spritesheet("frog-sheet", "frog-sheet.png", {
+            frameWidth: 193,
+            frameHeight: 78
+        })
+
         this.load.path = "./assets/tilemaps/"
 
         this.load.image("tilesetImage", "tileset.png")
@@ -96,6 +101,7 @@ class Load extends Phaser.Scene {
         this.load.audio("select", "select.wav")
         this.load.audio("explosion", "explosion.wav")
         this.load.audio("laser", "laser.wav")
+        this.load.audio("heartbeat", "heartbeat.mp3")
 
 
 
@@ -223,6 +229,20 @@ class Load extends Phaser.Scene {
             frameRate: 5,
             repeat: -1,
             frames: this.anims.generateFrameNumbers("sun-sheet", { frames: [ 0, 1]} )
+        })
+
+        this.anims.create({
+            key: "frog-attack",
+            frameRate: 5,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers("frog-sheet", { frames: [ 0, 1, 2]} )
+        })
+
+        this.anims.create({
+            key: "frog-idle",
+            frameRate: 1,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers("frog-sheet", { frames: [0]} )
         })
 
         this.scene.start("sceneKeys")

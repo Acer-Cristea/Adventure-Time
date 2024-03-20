@@ -15,7 +15,7 @@ class Death extends Phaser.Scene {
             width/2, height/2+300, "PixelScore", "PRESS UP TO GO BACK TO MENU", 24
         ).setOrigin(0.5) 
 
-        this.death_sound = this.sound.add("death",  { volume: 0.5})
+        this.death_sound = this.sound.add("death",  { volume: 0.25})
         this.death_sound.play()
 
 
