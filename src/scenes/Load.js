@@ -1,6 +1,6 @@
 class Load extends Phaser.Scene {
     constructor() {
-        super('sceneLoad')
+        super("sceneLoad")
     }
 
     preload() {
@@ -19,17 +19,17 @@ class Load extends Phaser.Scene {
         this.load.image("frog", "frog.png")
 
 
-        this.load.spritesheet('mc-sheet', 'mc-sheet.png', {
+        this.load.spritesheet("mc-sheet", "mc-sheet.png", {
             frameWidth: 115,
             frameHeight: 116
         })
 
-        this.load.spritesheet('mc-dance-sheet', 'mc-dance-sheet.png', {
+        this.load.spritesheet("mc-dance-sheet", "mc-dance-sheet.png", {
             frameWidth: 80,
             frameHeight: 116
         })
 
-        this.load.spritesheet('mc-bomb-sheet1', 'mc-bomb-sheet1.png', {
+        this.load.spritesheet("mc-bomb-sheet1", "mc-bomb-sheet1.png", {
             frameWidth: 80,
             frameHeight: 116
         })
@@ -38,44 +38,49 @@ class Load extends Phaser.Scene {
             frameHeight: 245
         })
 
-        this.load.spritesheet('fire', 'fire.png', {
+        this.load.spritesheet("fire", "fire.png", {
             frameWidth: 160,
             frameHeight: 103
         })
 
-        this.load.spritesheet('smallFire', 'smallFire.png', {
+        this.load.spritesheet("smallFire", "smallFire.png", {
             frameWidth: 120,
             frameHeight: 103
         })
 
-        this.load.spritesheet('coin-shine', 'coin_shine.png', {
+        this.load.spritesheet("coin-shine", "coin_shine.png", {
             frameWidth: 32,
             frameHeight: 50
         })
 
         
-        this.load.spritesheet('points', 'points.png', {
+        this.load.spritesheet("points", "points.png", {
             frameWidth: 177,
             frameHeight: 192
         })
 
-        this.load.spritesheet('points800', 'points800.png', {
+        this.load.spritesheet("points800", "points800.png", {
             frameWidth: 177,
             frameHeight: 192
         })
 
-        this.load.spritesheet('mc-sheet', 'mc-sheet.png', {
-            frameWidth: 115,
-            frameHeight: 116
+        this.load.spritesheet("frog_score", "frog_score.png", {
+            frameWidth: 130,
+            frameHeight: 120
         })
 
-        this.load.path = './assets/tilemaps/'
+        this.load.spritesheet("sun-sheet", "sun.png", {
+            frameWidth: 330,
+            frameHeight: 360
+        })
+
+        this.load.path = "./assets/tilemaps/"
 
         this.load.image("tilesetImage", "tileset.png")
         
-        this.load.tilemapTiledJSON('Map', 'Map.json')
+        this.load.tilemapTiledJSON("Map", "Map.json")
 
-        this.load.path = './assets/sounds/'
+        this.load.path = "./assets/sounds/"
         this.load.audio("walk-sfx", "walk.wav")
         this.load.audio("jump-sfx1", "sj.wav")
         this.load.audio("jump-sfx2", "ej.wav")
@@ -96,9 +101,9 @@ class Load extends Phaser.Scene {
 
 
 
-        this.load.path = './assets/fonts/'
-        this.load.bitmapFont('Pixel', 'Pixel.png', 'Pixel.xml')
-        this.load.bitmapFont('PixelScore', 'PixelScore.png', 'PixelScore.xml')
+        this.load.path = "./assets/fonts/"
+        this.load.bitmapFont("Pixel", "Pixel.png", "Pixel.xml")
+        this.load.bitmapFont("PixelScore", "PixelScore.png", "PixelScore.xml")
 
 
        
@@ -109,17 +114,17 @@ class Load extends Phaser.Scene {
     create() {
 
         this.anims.create({
-            key: 'mc-idle',
+            key: "mc-idle",
             frameRate: 6,
             repeat: -1,
-            frames: this.anims.generateFrameNumbers('mc-dance-sheet', { frames: [ 0, 1, 2 ]} )
+            frames: this.anims.generateFrameNumbers("mc-dance-sheet", { frames: [ 0, 1, 2 ]} )
         })
 
         this.anims.create({
-            key: 'mc-walk',
+            key: "mc-walk",
             frameRate: 4,
             repeat: -1,
-            frames: this.anims.generateFrameNumbers('mc-sheet', { frames: [ 3, 4 ]} )
+            frames: this.anims.generateFrameNumbers("mc-sheet", { frames: [ 3, 4 ]} )
         })
 
         this.anims.create({
@@ -172,40 +177,54 @@ class Load extends Phaser.Scene {
         })
 
         this.anims.create({
-            key: 'fire-idle',
+            key: "fire-idle",
             frameRate: 2,
             repeat: -1,
-            frames: this.anims.generateFrameNumbers('fire', { frames: [ 0, 1 ]} )
+            frames: this.anims.generateFrameNumbers("fire", { frames: [ 0, 1 ]} )
         })
 
         this.anims.create({
-            key: 'small-fire-idle',
+            key: "small-fire-idle",
             frameRate: 2,
             repeat: -1,
-            frames: this.anims.generateFrameNumbers('smallFire', { frames: [ 0, 1 ]} )
+            frames: this.anims.generateFrameNumbers("smallFire", { frames: [ 0, 1 ]} )
         })
 
         this.anims.create({
-            key: 'coin',
+            key: "coin",
             frameRate: 6,
             repeat: 0,
-            frames: this.anims.generateFrameNumbers('coin-shine', { frames: [ 0, 1]} )
+            frames: this.anims.generateFrameNumbers("coin-shine", { frames: [ 0, 1]} )
         })
 
         this.anims.create({
-            key: 'points',
+            key: "points",
             frameRate: 8,
             repeat: 0,
-            frames: this.anims.generateFrameNumbers('points', { frames: [ 0, 1, 0, 1, 0, 1, 0, 1]} )
+            frames: this.anims.generateFrameNumbers("points", { frames: [ 0, 1, 0, 1, 0, 1, 0, 1]} )
         })
 
         this.anims.create({
-            key: 'points800',
+            key: "points800",
             frameRate: 8,
             repeat: 0,
-            frames: this.anims.generateFrameNumbers('points800', { frames: [ 0, 1, 0, 1, 0, 1, 0, 1]} )
+            frames: this.anims.generateFrameNumbers("points800", { frames: [ 0, 1, 0, 1, 0, 1, 0, 1]} )
         })
 
-        this.scene.start('sceneKeys')
+        this.anims.create({
+            key: "points1000",
+            frameRate: 8,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers("frog_score", { frames: [ 0, 1, 0, 1, 0, 1, 0, 1]} )
+        })
+
+        this.anims.create({
+            key: "sun-idle",
+            frameRate: 5,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers("sun-sheet", { frames: [ 0, 1]} )
+        })
+
+        this.scene.start("sceneKeys")
     }
 }

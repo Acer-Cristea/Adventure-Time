@@ -52,6 +52,7 @@ class Play extends Phaser.Scene {
 
         this.checkpointSpawn = this.map.findObject("spawn", (obj) => obj.name === "checkpoint")
         this.checkpoint = this.physics.add.sprite(this.checkpointSpawn.x, this.checkpointSpawn.y, null)
+        this.checkpoint.setSize(20, 200)
         this.checkpoint.body.setAllowGravity(false)
         this.checkpoint.body.setImmovable(true)
         this.checkpoint.setVisible(false)
@@ -62,6 +63,12 @@ class Play extends Phaser.Scene {
         this.lastCheckpoint.y = this.mcSpawn.y
 
         this.physics.add.overlap(this.mc, this.checkpoint, this.handleCheckpointCollision, null, this)
+
+        this.sunSpawn = this.map.findObject("sun_spawn", (obj) => obj.name === "sunSpawn")
+        this.sun = this.physics.add.sprite(this.sunSpawn.x,this.sunSpawn.y , "sun", 0)
+        this.sun.body.setImmovable(true)
+        this.sun.body.setAllowGravity(false)
+        this.sun.anims.play("sun-idle")
 
         this.beeSpawn = this.map.findObject("bee_spawn", (obj) => obj.name === "beeSpawn")
         this.bee = this.physics.add.sprite(this.beeSpawn.x,this.beeSpawn.y , "bee", 0)
@@ -148,11 +155,16 @@ class Play extends Phaser.Scene {
         this.coin8.setImmovable(true)
         this.coin8.body.setAllowGravity(false)  
 
+        this.coinSpawn9 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn9")
+        this.coin9 = this.physics.add.sprite(this.coinSpawn9.x,this.coinSpawn9.y ,"coin")
+        this.coin9.setImmovable(true)
+        this.coin9.body.setAllowGravity(false)  
+
         this.physics.add.collider(this.mc, this.colLayer)
         this.physics.add.collider(this.bee, this.colLayer)
         this.physics.add.collider(this.bunny, this.colLayer)
         this.physics.add.collider(this.frog, this.colLayer)
-        this.physics.add.collider(this.mc.bombHitbox, this.colLayer, this.handleLayerBomb, null, this)
+        this.bombCollider = this.physics.add.collider(this.mc.bombHitbox, this.colLayer, this.handleLayerBomb, null, this)
         this.physics.add.collider(this.fire1, this.colLayer)
         this.physics.add.collider(this.fire2, this.colLayer)
         this.physics.add.collider(this.fire3, this.colLayer)
@@ -169,14 +181,16 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.mc, this.fire4, this.handleCollisionF, null, this)
         this.physics.add.collider(this.mc, this.fire5, this.handleCollisionF, null, this)
 
-        this.physics.add.collider(this.mc, this.coin1, this.handleCollisionC, null, this)
-        this.physics.add.collider(this.mc, this.coin2, this.handleCollisionC, null, this)
-        this.physics.add.collider(this.mc, this.coin3, this.handleCollisionC, null, this)
-        this.physics.add.collider(this.mc, this.coin4, this.handleCollisionC, null, this)
-        this.physics.add.collider(this.mc, this.coin5, this.handleCollisionC, null, this)
-        this.physics.add.collider(this.mc, this.coin6, this.handleCollisionC, null, this)
-        this.physics.add.collider(this.mc, this.coin7, this.handleCollisionC, null, this)
-        this.physics.add.collider(this.mc, this.coin8, this.handleCollisionC, null, this)
+        this.physics.add.overlap(this.mc, this.coin1, this.handleCollisionC, null, this)
+        this.physics.add.overlap(this.mc, this.coin2, this.handleCollisionC, null, this)
+        this.physics.add.overlap(this.mc, this.coin3, this.handleCollisionC, null, this)
+        this.physics.add.overlap(this.mc, this.coin4, this.handleCollisionC, null, this)
+        this.physics.add.overlap(this.mc, this.coin5, this.handleCollisionC, null, this)
+        this.physics.add.overlap(this.mc, this.coin6, this.handleCollisionC, null, this)
+        this.physics.add.overlap(this.mc, this.coin7, this.handleCollisionC, null, this)
+        this.physics.add.overlap(this.mc, this.coin8, this.handleCollisionC, null, this)
+        this.physics.add.overlap(this.mc, this.coin9, this.handleCollisionC, null, this)
+
 
         this.physics.add.collider(this.mc.attackHitbox, this.bee, this.handleAttack, null, this)
         this.physics.add.overlap(this.mc.attackHitbox, this.bunny, this.handleAttackBunny, null, this)
@@ -362,11 +376,17 @@ class Play extends Phaser.Scene {
 
     handleBombBee(bomb, bee){
         bee.destroy()
+
+        this.explosion_sound.play()
+        this.bombCollider.active = false
         bomb.setVisible(false)
-        bomb.setVelocityY(500)
+        this.bomb.setVisible(false)
+
+
         this.score += 500
         this.scoreText.setText("SCORE: " + this.score)
         this.point_sound.play()
+
         const points = this.add.sprite(bee.x, bee.y, "points", 0)
         points.anims.play("points")
         points.once("animationcomplete", () => {
@@ -378,12 +398,17 @@ class Play extends Phaser.Scene {
     handleBombBunny(bomb, bunny){
         bunny.destroy()
         this.bunnyLife = false
+
+        this.explosion_sound.play()
+        this.bombCollider.active = false
         bomb.setVisible(false)
+        this.bomb.setVisible(false)
+
+        
         this.score += 800
         this.scoreText.setText("SCORE: " + this.score)
         this.point_sound.play()
-        this.bomb.destroy()
-        this.explosion_sound.play()
+        
         const points = this.add.sprite(bunny.x, bunny.y, "points800", 0)
         points.anims.play("points800")
         points.once("animationcomplete", () => {
@@ -392,10 +417,10 @@ class Play extends Phaser.Scene {
     }
 
     handleLayerBomb(bombT, colLayer){
-        this.explosion_sound.play()
-        bombT.setVisible(false)
-        this.bomb.setVisible(false)
-        this.bomb.destroy()
+            this.explosion_sound.play()
+            bombT.setVisible(false)
+            this.bomb.setVisible(false)
+            bombT.setVelocityY(0)
     }
 
     shootLaser() {
@@ -490,6 +515,12 @@ class Play extends Phaser.Scene {
                         this.score += 1000
                         this.scoreText.setText("SCORE: " + this.score)
                         this.point_sound.play()
+
+                        const points = this.add.sprite(this.frog.x, this.frog.y-60, "points1000", 0)
+                        points.anims.play("points1000")
+                        points.once("animationcomplete", () => {
+                            points.destroy() 
+                        })
 
                     }
                 } else {
