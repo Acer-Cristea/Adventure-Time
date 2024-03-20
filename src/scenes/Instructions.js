@@ -65,7 +65,7 @@ class Instructions extends Phaser.Scene {
         this.laser = this.physics.add.sprite(this.bunny.x-150, this.bunny.y-40, "laser")
         this.laser.body.setAllowGravity(false)
         this.laser.setVelocityX(-400)
-        this.frog = this.add.sprite(width / 2+375, height / 2+130, "frog-sheet", 0)
+        this.frog = this.add.sprite(width / 2+335, height / 2+130, "frog-sheet", 0)
 
     }
 
