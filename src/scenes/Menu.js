@@ -8,7 +8,7 @@ class Menu extends Phaser.Scene {
         this.select_sound = this.sound.add("select", {volume: 0.5})
 
 
-        this.KEYS = this.scene.get('sceneKeys').KEYS
+        this.KEYS = this.scene.get("sceneKeys").KEYS
     
         this.add.image(0,0,"title").setOrigin(0)
 
@@ -23,12 +23,12 @@ class Menu extends Phaser.Scene {
 
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP)) {
             this.select_sound.play()
-            this.scene.start('sceneInstructions')
+            this.scene.start("sceneInstructions")
         }
 
         if(Phaser.Input.Keyboard.JustDown(KEYS.DOWN)) {
             this.select_sound.play()
-            this.scene.start('sceneCredits')
+            this.scene.start("sceneCredits")
         }
 
     }

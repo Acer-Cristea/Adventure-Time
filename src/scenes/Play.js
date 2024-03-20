@@ -8,9 +8,10 @@ class Play extends Phaser.Scene {
     }
 
     create() {
-
+        //keys
         this.KEYS = this.scene.get("sceneKeys").KEYS
 
+        //sound
         this.music = this.sound.add("background_music", {loop: true, volume: 0.1})
         this.attack_sound = this.sound.add("attack-sfx", { volume: 0.1 })
         this.coin_sound1 = this.sound.add("coin-sfx1", { volume: 0.05 })
@@ -19,11 +20,10 @@ class Play extends Phaser.Scene {
         this.hit_sound = this.sound.add("hit", { volume: 0.4})
         this.explosion_sound = this.sound.add("explosion", { volume: 0.4})
         this.laser_sound = this.sound.add("laser", { volume: 0.4})
-
-
-
+        
         this.music.play()
 
+        //combo help
         this.frogDistanceThreshold = 400 
         this.commandSequence = [] 
         this.expectedSequence = [            
@@ -39,17 +39,20 @@ class Play extends Phaser.Scene {
             Phaser.Input.Keyboard.KeyCodes.UP
         ] 
         this.commandIndex = 0 
- 
+        
+        //map
         this.map = this.add.tilemap("Map")
         this.tileset = this.map.addTilesetImage("Base", "tilesetImage")
         this.bkgLayer = this.map.createLayer("bkg", this.tileset, 0 ,0)
         this.colLayer = this.map.createLayer("col", this.tileset,0,0)
         this.colLayer.setCollisionByProperty({collides: true})
         
+        //mc
         this.mcSpawn = this.map.findObject("spawn", (obj) => obj.name === "mcSpawn")
         this.mc = new MC(this, this.mcSpawn.x, this.mcSpawn.y, "mc-sheet", 0)
         this.mc.anims.play("mc-idle")
 
+        //checkpoint
         this.checkpointSpawn = this.map.findObject("spawn", (obj) => obj.name === "checkpoint")
         this.checkpoint = this.physics.add.sprite(this.checkpointSpawn.x, this.checkpointSpawn.y, null)
         this.checkpoint.setSize(20, 200)
@@ -64,27 +67,32 @@ class Play extends Phaser.Scene {
 
         this.physics.add.overlap(this.mc, this.checkpoint, this.handleCheckpointCollision, null, this)
 
+        ///sun
         this.sunSpawn = this.map.findObject("sun_spawn", (obj) => obj.name === "sunSpawn")
         this.sun = this.physics.add.sprite(this.sunSpawn.x,this.sunSpawn.y , "sun", 0)
         this.sun.body.setImmovable(true)
         this.sun.body.setAllowGravity(false)
         this.sun.anims.play("sun-idle")
 
+        //bee
         this.beeSpawn = this.map.findObject("bee_spawn", (obj) => obj.name === "beeSpawn")
         this.bee = this.physics.add.sprite(this.beeSpawn.x,this.beeSpawn.y , "bee", 0)
         this.bee.setSize(200,200)
         this.bee.body.setImmovable(true)
 
+        //bunny
         this.bunnySpawn = this.map.findObject("bunny_spawn", (obj) => obj.name === "bunnySpawn")
         this.bunny = this.physics.add.sprite(this.bunnySpawn.x,this.bunnySpawn.y , "bunny", 0)
         this.bunny.setSize(200,250)
         this.bunny.body.setImmovable(true)
 
+        //frog
         this.frogSpawn = this.map.findObject("frog_spawn", (obj) => obj.name === "frogSpawn")
         this.frog = this.physics.add.sprite(this.frogSpawn.x,this.frogSpawn.y , "frog", 0)
         this.frog.setSize(300,78)
         this.frog.body.setImmovable(true)        
 
+        //fire
         this.fireSpawn1 = this.map.findObject("fire_spawn", (obj) => obj.name === "fireSpawn1")
         this.fire1 = this.physics.add.sprite(this.fireSpawn1.x,this.fireSpawn1.y ,"fire")
         this.fire1.setImmovable(true)
@@ -115,6 +123,7 @@ class Play extends Phaser.Scene {
         this.fire5.body.setCollideWorldBounds(true)
         this.fire5.anims.play("fire-idle")
 
+        //coin
         this.coinSpawn1 = this.map.findObject("coin_spawn", (obj) => obj.name === "coinSpawn1")
         this.coin1 = this.physics.add.sprite(this.coinSpawn1.x,this.coinSpawn1.y ,"coin")
         this.coin1.setImmovable(true)
@@ -160,6 +169,7 @@ class Play extends Phaser.Scene {
         this.coin9.setImmovable(true)
         this.coin9.body.setAllowGravity(false)  
 
+        //physics with the collision layer
         this.physics.add.collider(this.mc, this.colLayer)
         this.physics.add.collider(this.bee, this.colLayer)
         this.physics.add.collider(this.bunny, this.colLayer)
@@ -171,6 +181,7 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.fire4, this.colLayer)
         this.physics.add.collider(this.fire5, this.colLayer)
 
+        //mc collision with enemies, fire, coins
         this.physics.add.collider(this.mc, this.bee, this.handleCollision, null, this)
         this.physics.add.collider(this.mc, this.bunny, this.handleCollisionBunny, null, this)
         this.physics.add.collider(this.mc, this.frog)
@@ -191,25 +202,31 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.mc, this.coin8, this.handleCollisionC, null, this)
         this.physics.add.overlap(this.mc, this.coin9, this.handleCollisionC, null, this)
 
-
+        //mc hitbox collision and bomb collision with enemies
         this.physics.add.collider(this.mc.attackHitbox, this.bee, this.handleAttack, null, this)
         this.physics.add.overlap(this.mc.attackHitbox, this.bunny, this.handleAttackBunny, null, this)
 
         this.physics.add.collider(this.mc.bombHitbox, this.bee, this.handleBombBee, null, this)
-        this.physics.add.collider(this.mc.bombHitbox, this.bunny, this.handleBombBunny, null, this)
+        this.physics.add.overlap(this.mc.bombHitbox, this.bunny, this.handleBombBunny, null, this)
 
+        //ui camera
         this.uiCamera = this.cameras.add(0, 0, 1600, 100)
         this.uiCamera.setScroll(0, 0) 
-        
         this.uiCamera.ignore(this.bkgLayer)
         this.uiCamera.ignore(this.colLayer) 
-        this.add.image(0, 0, "TB").setOrigin(0).setScrollFactor(0) 
 
+        // main camera
         this.cameras.main.setBounds(0,0, this.map.widthInPixels, this.map.heightInPixels)
         this.cameras.main.startFollow(this.mc, true)
         this.physics.world.setBounds(0,0, this.map.widthInPixels, this.map.heightInPixels)
+        
+        //border ui
+        this.add.image(0, 0, "TB").setOrigin(0).setScrollFactor(0) 
+
+        //score
         this.score = 0
 
+        //lives
         this.life1 = this.add.image(375, 30, "life").setOrigin(0)
         this.life2 = this.add.image(275, 30, "life").setOrigin(0)
         this.life3 = this.add.image(175, 30, "life").setOrigin(0)
@@ -222,8 +239,10 @@ class Play extends Phaser.Scene {
 
         //WHY CAN"T YOU ROTATE A PHYSICS BODY IN PHASER EASILY. THAT MAKES NO SENSE
 
+        //laser tracking
         this.laserPreview = this.add.graphics()
 
+        //laser tracking preview
         this.previewlaserTimer = this.time.addEvent({
             delay: 500,
             loop: true, 
@@ -231,6 +250,7 @@ class Play extends Phaser.Scene {
             callbackScope: this
         })
 
+        //fires laser every 2 secondss
         this.laserTimer = this.time.addEvent({
             delay: 2000, 
             loop: true, 
@@ -238,20 +258,23 @@ class Play extends Phaser.Scene {
             callbackScope: this
         })
 
+        //handle combo
         this.input.keyboard.on("keydown", this.handleKeyDown, this)
 
     }
 
     update() {
 
+        // get local KEYS reference
+        const { KEYS } = this
+
+        // you win
         if (this.mc.x >= this.map.widthInPixels-70){
             this.music.stop()
             this.scene.start("sceneWinner")           
         }
 
-        // get local KEYS reference
-        const { KEYS } = this
-
+        //change camera position to account for map
         this.playerHeight = this.mc.y
         if (this.playerHeight < 1250) {
             this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels-610)
@@ -259,18 +282,20 @@ class Play extends Phaser.Scene {
             this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels-120)
         }
 
+        //distances for enemy interaction
         this.distanceThreshold = 900
         this.distanceThreshold2 = 1000
         this.distanceBunny =  Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bunny.x, this.bunny.y)
         const distanceBee = Phaser.Math.Distance.Between(this.mc.x,this.mc.y, this.bee.x, this.bee.y)
 
-        
+        //preview laser only shows if bunny is alive
         if (this.bunnyLife) {
                 this.previewlaserTimer
         } else {
             this.clearLaserPreview()
         }
 
+        //bee animation
         if (distanceBee <= this.distanceThreshold){
             if (this.bee.anims && !this.bee.anims.isPlaying) {
                 this.bee.anims.play("bee-walk")
@@ -285,9 +310,12 @@ class Play extends Phaser.Scene {
                 }
             }
         }
+
+        //STEP
         this.mcFSM.step()
     }
 
+    //melee attack with bee
     handleAttack(attackHitbox, bee){
         this.attack_sound.play()
         bee.destroy()
@@ -301,6 +329,7 @@ class Play extends Phaser.Scene {
         })
     }
 
+    //melee attack with bunny
     handleAttackBunny(attackHitbox, bunny){    
         this.attack_sound.play()
         bunny.destroy()
@@ -315,6 +344,7 @@ class Play extends Phaser.Scene {
         })
     }
 
+    //bee hurts player
     handleCollision(mc, bee){
         if (this.life1.visible){
             this.life1.setVisible(false)
@@ -331,6 +361,7 @@ class Play extends Phaser.Scene {
         bee.setVelocityX(0)
     }
 
+    //bunny hurts player
     handleCollisionBunny(mc, bunny){
         if (this.life1.visible){
             this.life1.setVisible(false)
@@ -346,6 +377,7 @@ class Play extends Phaser.Scene {
         bunny.setPosition(this.bunnySpawn.x, this.bunnySpawn.y)
     }
 
+    //fire hurts player
     handleCollisionF(mc, fire){
         if (this.life1.visible){
             this.life1.setVisible(false)
@@ -360,6 +392,7 @@ class Play extends Phaser.Scene {
         mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)    
     }
 
+    //interaction with coins
     handleCollisionC(mc, coin){
         this.coin_sound1.play()
         this.coin_sound2.play()
@@ -374,6 +407,7 @@ class Play extends Phaser.Scene {
         })
     }
 
+    //bomb and bee
     handleBombBee(bomb, bee){
         bee.destroy()
 
@@ -395,6 +429,7 @@ class Play extends Phaser.Scene {
 
     }
 
+    //bunny and bee
     handleBombBunny(bomb, bunny){
         bunny.destroy()
         this.bunnyLife = false
@@ -416,6 +451,7 @@ class Play extends Phaser.Scene {
         })
     }
 
+    //missing your bomb
     handleLayerBomb(bombT, colLayer){
             this.explosion_sound.play()
             bombT.setVisible(false)
@@ -423,6 +459,7 @@ class Play extends Phaser.Scene {
             bombT.setVelocityY(0)
     }
 
+    //laser is fired for the bunny
     shootLaser() {
         if (this.bunnyLife){
             if ((this.distanceBunny <= this.distanceThreshold) && (this.distanceBunny > 300)){
@@ -446,7 +483,7 @@ class Play extends Phaser.Scene {
         }
     }
     
-
+    //laser hits player
     handleLaserCollision(mc, laser) {
         mc.setPosition(this.lastCheckpoint.x, this.lastCheckpoint.y)   
         laser.destroy() 
@@ -464,7 +501,7 @@ class Play extends Phaser.Scene {
     }
 
 
-    
+    //laser preview updated based on player position
     updateLaserPreview() {
         this.laserPreview.clear()
         if ((this.distanceBunny <= this.distanceThreshold2) && (this.distanceBunny > 300)){
@@ -480,21 +517,24 @@ class Play extends Phaser.Scene {
         }
     }
 
+    //clear the laser preview
     clearLaserPreview() {
         this.laserPreview.clear()
     }
 
+    //update checkpoint collision
     handleCheckpointCollision(mc, checkpoint) {
         this.lastCheckpoint.x = checkpoint.x
         this.lastCheckpoint.y = checkpoint.y
     }
         
+    //used for the combo
     handleKeyDown(event) {
         const keyCode = event.keyCode
         this.handleKeyPress(keyCode)
     }
 
-
+    //When you are in distance, keeps track of index of combo ensuring you enter the right order. If you don't you die
     handleKeyDown(key) {
         if (this.frogLife) {
 
@@ -545,6 +585,7 @@ class Play extends Phaser.Scene {
         }
     }
 
+    //combo gets reset if you fail or complete it
     resetCommandSequence() {
         this.commandSequence = []
         this.commandIndex = 0

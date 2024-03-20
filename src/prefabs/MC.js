@@ -22,7 +22,7 @@ class MC extends Phaser.Physics.Arcade.Sprite {
 
         // Create the attack hitbox sprite
         this.attackHitbox = scene.physics.add.sprite(10, 10, null)
-        this.attackHitbox.setSize(10, 10);
+        this.attackHitbox.setSize(10, 10)
         this.attackHitbox.body.setAllowGravity(false)
         this.attackHitbox.setVisible(false)
 
@@ -33,11 +33,11 @@ class MC extends Phaser.Physics.Arcade.Sprite {
         this.bombHitbox.body.setCollideWorldBounds(true)
 
 
-        this.walkSound = scene.sound.add('walk-sfx', { volume: 0.05 })
+        this.walkSound = scene.sound.add("walk-sfx", { volume: 0.05 })
 
         
         // initialize state machine
-        scene.mcFSM = new StateMachine('idle', {
+        scene.mcFSM = new StateMachine("idle", {
             idle: new IdleState(),
             walk: new WalkState(),
             jump: new JumpState(),
@@ -67,27 +67,27 @@ class IdleState extends State {
 
         
         if(mc.body.velocity.x == 0 && !mc.anims.isPlaying) {
-            mc.anims.play('mc-idle');
+            mc.anims.play("mc-idle")
         }
 
         // jump
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP) && grounded) {
-            this.stateMachine.transition('jump')
+            this.stateMachine.transition("jump")
         }
 
         // attack
         if(Phaser.Input.Keyboard.JustDown(KEYS.ATTACK) && grounded) {
-            this.stateMachine.transition('attack')
+            this.stateMachine.transition("attack")
         }
 
         // bomb_attack
         if(Phaser.Input.Keyboard.JustDown(KEYS.BOMB) && grounded) {
-            this.stateMachine.transition('bomb')
+            this.stateMachine.transition("bomb")
         }
 
         // left/right to move
         if(KEYS.LEFT.isDown || KEYS.RIGHT.isDown) {
-            this.stateMachine.transition('walk')
+            this.stateMachine.transition("walk")
             return
         }
     }
@@ -95,10 +95,10 @@ class IdleState extends State {
 //add a walking sound effect
 class WalkState extends State {
     enter(scene, mc) {
-        //console.log('WalkState: enter')
+        //console.log("WalkState: enter")
         mc.attackHitbox.setPosition(10, 10)
 
-        mc.anims.play('mc-walk')
+        mc.anims.play("mc-walk")
 
         
     }
@@ -122,18 +122,18 @@ class WalkState extends State {
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP) && grounded) {
             mc.anims.stop("mc-walk")
             //mc.walkSound.stop()
-            this.stateMachine.transition('jump')
+            this.stateMachine.transition("jump")
         }
 
         // attack
         if(Phaser.Input.Keyboard.JustDown(KEYS.ATTACK) && grounded) {
            // mc.walkSound.stop()
-            this.stateMachine.transition('attack')
+            this.stateMachine.transition("attack")
         }
 
         // bomb_attack
         if(Phaser.Input.Keyboard.JustDown(KEYS.BOMB) && grounded) {
-            this.stateMachine.transition('bomb')
+            this.stateMachine.transition("bomb")
         }
 
         // back to idle
@@ -141,7 +141,7 @@ class WalkState extends State {
             mc.anims.stop("mc-walk")
 
             //mc.walkSound.stop()
-            this.stateMachine.transition('idle')
+            this.stateMachine.transition("idle")
         }
 
         
@@ -168,22 +168,22 @@ class JumpState extends State {
     enter(scene, mc) {
 
         //mc.walkSound.stop()
-        mc.anims.play('mc-jump')
+        mc.anims.play("mc-jump")
         mc.body.setVelocityY(mc.JUMP_VELOCITY)
         mc.body.setSize(mc.width-60, mc.height/2+40, false)
         mc.body.setOffset(30,10)
 
         // play sfx
-        const sound1 = scene.sound.add('jump-sfx1', { volume: 0.1 })
-        sound1.on('complete', () => {
+        const sound1 = scene.sound.add("jump-sfx1", { volume: 0.1 })
+        sound1.on("complete", () => {
             // Add a delay before playing the second sound effect
             setTimeout(() => {
                 // Play the second sound effect after the delay
-                const sound2 = scene.sound.add('jump-sfx2', { volume: 0.1 })
-                sound2.on('complete', () => {
+                const sound2 = scene.sound.add("jump-sfx2", { volume: 0.1 })
+                sound2.on("complete", () => {
                     // Transition to the next state when the second sound finishes
-                    this.stateMachine.transition('idle');
-                });
+                    this.stateMachine.transition("idle")
+                })
                 sound2.play()
             }, 600) // Adjust the delay time (in milliseconds) as needed
         })
@@ -204,7 +204,7 @@ class JumpState extends State {
             mc.body.setSize(mc.width-60, mc.height/2+40, false)
             mc.body.setOffset(30,10)
             mc.setFlip(true)
-            mc.body.setVelocityX(-mc.WALK_VELOCITY)  // slower speed in air, maybe don't we'll see
+            mc.body.setVelocityX(-mc.WALK_VELOCITY)  // slower speed in air, maybe don"t we"ll see
         }
 
         else if(KEYS.RIGHT.isDown) {
@@ -215,7 +215,7 @@ class JumpState extends State {
         }
 
         if(grounded) {
-            this.stateMachine.transition('idle')
+            this.stateMachine.transition("idle")
         }
     }
 }
@@ -224,18 +224,18 @@ class AttackState extends State {
     enter(scene, mc) {
         //fix flipping issue
         //console.log("In AttackState")
-        const sound = scene.sound.add('attack-sfx1', { volume: 0.05 })
+        const sound = scene.sound.add("attack-sfx1", { volume: 0.05 })
         sound.play()
 
 
-        mc.anims.play('mc-attack')
+        mc.anims.play("mc-attack")
         mc.body.setVelocityY(mc.JUMP_VELOCITY)
 
         mc.body.setSize(mc.width-60, mc.height/2+40, false)
         mc.body.setOffset(30,10)
 
         // mc.testHitbox = scene.physics.add.sprite(mc.x, mc.y, null)
-        // mc.testHitbox.setSize(100, 100);
+        // mc.testHitbox.setSize(100, 100)
         // mc.testHitbox.body.setAllowGravity(false)
         // mc.testHitbox.setVisible(false)
          
@@ -256,7 +256,7 @@ class AttackState extends State {
         let grounded = mc.body.velocity.y == 0
         // end jump
         if(grounded) {
-            this.stateMachine.transition('idle')
+            this.stateMachine.transition("idle")
         }
 
         // handle movement
@@ -284,7 +284,7 @@ class BombState extends State {
         //fix flipping issue
         //console.log("In AttackState")
 
-        mc.anims.play('mc-bomb')
+        mc.anims.play("mc-bomb")
 
         if (mc.bombHitbox.body.enable){
 

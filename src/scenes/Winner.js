@@ -8,15 +8,15 @@ class Winner extends Phaser.Scene {
         this.select_sound = this.sound.add("select", {volume: 0.5})
 
 
-        this.KEYS = this.scene.get('sceneKeys').KEYS
+        this.KEYS = this.scene.get("sceneKeys").KEYS
 
 
         this.instructionText1 = this.add.bitmapText(
-            width/2, height/2, 'PixelScore', 'YOU DEFENDED THE SUN!', 60
+            width/2, height/2, "PixelScore", "YOU DEFENDED THE SUN!", 60
         ).setOrigin(0.5)
 
         this.instructionText2 = this.add.bitmapText(
-            width/2, height/2+300, 'PixelScore', 'PRESS UP TO GO BACK TO MENU', 24
+            width/2, height/2+300, "PixelScore", "PRESS UP TO GO BACK TO MENU", 24
         ).setOrigin(0.5)       
 
 
@@ -29,7 +29,7 @@ class Winner extends Phaser.Scene {
 
         if(Phaser.Input.Keyboard.JustDown(KEYS.JUMP)) {
             this.select_sound.play()
-            this.scene.start('sceneMenu')
+            this.scene.start("sceneMenu")
         }
 
     }

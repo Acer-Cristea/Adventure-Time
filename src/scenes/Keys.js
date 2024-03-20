@@ -5,7 +5,7 @@ Code solution from StinOfSin: https://phaser.discourse.group/t/configure-keyboar
 
 class Keys extends Phaser.Scene {
     constructor() {
-        super('sceneKeys')
+        super("sceneKeys")
     }
 
     create() {
@@ -21,6 +21,6 @@ class Keys extends Phaser.Scene {
         })
 
         // launch next scene so it will run concurrently with this one
-        this.scene.launch('sceneMenu')
+        this.scene.launch("sceneMenu")
     }
 }
