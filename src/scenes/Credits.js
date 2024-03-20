@@ -28,7 +28,7 @@ class Credits extends Phaser.Scene {
         ).setOrigin(0.5)
 
         this.instructionText2 = this.add.bitmapText(
-            width/2, height/2, "PixelScore", "HEARTBEAT MUSIC: PIXABAY", 24
+            width/2, height/2+50, "PixelScore", "HEARTBEAT MUSIC: PIXABAY", 24
         ).setOrigin(0.5)
 
         this.instructionText2 = this.add.bitmapText(
